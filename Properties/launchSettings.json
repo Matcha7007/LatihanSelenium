@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "LatihanSelenium": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
