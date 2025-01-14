@@ -25,7 +25,7 @@ namespace LatihanSelenium.Utilities
 			{
 				Console.WriteLine($"Starting Read Automation Config");
 
-				using (FileStream fs = new(cfg.ExcelConfigPath, FileMode.Open, FileAccess.Read))
+				using (FileStream fs = new(cfg.ExcelPath, FileMode.Open, FileAccess.Read))
 				{
 					using (IWorkbook wb = new XSSFWorkbook(fs))
 					{

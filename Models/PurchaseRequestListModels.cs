@@ -25,4 +25,5 @@
 		public string Name { get; set; } = string.Empty;
 		public int Qty { get; set; }
 		public int Price { get; set; }
+	}
 }
