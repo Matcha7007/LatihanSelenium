@@ -86,8 +86,8 @@ namespace LatihanSelenium.Utilities
 						break;
 					case TestCaseConstant.Approval:
 						List<TaskModels> newTask = param.Tasks.Where(x => x.TestCaseId.Equals(plan.TestCaseId)).OrderBy(x => x.Sequence).ToList()!;
-						//if (newTask.Count > 0)
-							//tasks.HandleTaskAction(driver, cfg, plan, newTask, users, param);
+						if (newTask.Count > 0)
+							TaskPages.HandleTaskAction(driver, cfg, plan, newTask, users, param);
 						break;
 					default: break;
 				}
