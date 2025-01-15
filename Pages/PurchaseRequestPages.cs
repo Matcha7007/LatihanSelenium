@@ -111,7 +111,7 @@ namespace LatihanSelenium.Pages
 					{
 						plan.Status = StatusConstant.Success;
 						plan.Remarks = $"{plan.TestCase} {plan.ModuleName} is Successfully.";
-						plan.RequestNumber = param.PRSubject; // harus cari pr no dari list setelah submit
+						plan.RequestNumber = PageHelpers.SearchDocumentNumber(driver, ModuleNameConstant.PR, PurchaseRequestLocators.SearchList, PurchaseRequestLocators.RowListPrNumber, param.PRSubject);
 					}
 					else
 					{

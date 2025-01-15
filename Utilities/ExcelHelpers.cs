@@ -46,8 +46,7 @@ namespace LatihanSelenium.Utilities
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine($"Fail ReadAutomationConfig : \n - {ex.Message}");
-				return result;
+				throw new Exception($"Fail ReadAutomationConfig : \n - {ex.Message}");
 			}
 		}
 
@@ -152,8 +151,8 @@ namespace LatihanSelenium.Utilities
 								goodsItem = new()
 								{
 									Name = goodsItemName,									
-									Qty = int.Parse(TryGetString(currentRow.GetCell(colIndexGoodsItemQty), workSheetName, cellHeaderGoodsItemQty.StringCellValue, rowNum)),
-									Price = int.Parse(TryGetString(currentRow.GetCell(colIndexGoodsItemPrice), workSheetName, cellHeaderGoodsItemPrice.StringCellValue, rowNum))
+									Qty = IntegerParse(TryGetString(currentRow.GetCell(colIndexGoodsItemQty), workSheetName, cellHeaderGoodsItemQty.StringCellValue, rowNum)),
+									Price = IntegerParse(TryGetString(currentRow.GetCell(colIndexGoodsItemPrice), workSheetName, cellHeaderGoodsItemPrice.StringCellValue, rowNum))
 								};
 							}
 
@@ -164,8 +163,8 @@ namespace LatihanSelenium.Utilities
 								servicesItem = new()
 								{
 									Name = servicesItemName,
-									Qty = int.Parse(TryGetString(currentRow.GetCell(colIndexServicesItemQty), workSheetName, cellHeaderServicesItemQty.StringCellValue, rowNum)),
-									Price = int.Parse(TryGetString(currentRow.GetCell(colIndexServicesItemPrice), workSheetName, cellHeaderServicesItemPrice.StringCellValue, rowNum))
+									Qty = IntegerParse(TryGetString(currentRow.GetCell(colIndexServicesItemQty), workSheetName, cellHeaderServicesItemQty.StringCellValue, rowNum)),
+									Price = IntegerParse(TryGetString(currentRow.GetCell(colIndexServicesItemPrice), workSheetName, cellHeaderServicesItemPrice.StringCellValue, rowNum))
 								};
 							}
 
@@ -189,8 +188,8 @@ namespace LatihanSelenium.Utilities
 								param.RequiredDate = TryGetString(currentRow.GetCell(colIndexRequiredDate), workSheetName, cellHeaderRequiredDate.StringCellValue, rowNum);
 								param.ProjectCode = TryGetString(currentRow.GetCell(colIndexProjectCode), workSheetName, cellHeaderProjectCode.StringCellValue, rowNum);
 								param.Remarks = TryGetString(currentRow.GetCell(colIndexRemarks), workSheetName, cellHeaderRemarks.StringCellValue, rowNum);
-								param.GoodsVATRate = int.Parse(TryGetString(currentRow.GetCell(colIndexGoodsVATRate), workSheetName, cellHeaderGoodsVATRate.StringCellValue, rowNum));
-								param.ServicesVATRate = int.Parse(TryGetString(currentRow.GetCell(colIndexServicesVATRate), workSheetName, cellHeaderServicesVATRate.StringCellValue, rowNum));
+								param.GoodsVATRate = IntegerParse(TryGetString(currentRow.GetCell(colIndexGoodsVATRate), workSheetName, cellHeaderGoodsVATRate.StringCellValue, rowNum));
+								param.ServicesVATRate = IntegerParse(TryGetString(currentRow.GetCell(colIndexServicesVATRate), workSheetName, cellHeaderServicesVATRate.StringCellValue, rowNum));
 								if (!string.IsNullOrEmpty(goodsItem.Name)) param.GoodsItems.Add(goodsItem);
 								if (!string.IsNullOrEmpty(servicesItem.Name)) param.ServicesItems.Add(servicesItem);
 								if (!string.IsNullOrEmpty(attachmentPath)) param.AttachmentPaths.Add(attachmentPath);
@@ -223,8 +222,7 @@ namespace LatihanSelenium.Utilities
 				int colIndexSeq = colIndexId + 1;
 				int colIndexActor = colIndexSeq + 1;
 				int colIndexAction = colIndexActor + 1;
-				int colIndexReturnTo = colIndexAction + 1;
-				int colIndexNotes = colIndexReturnTo + 1;
+				int colIndexNotes = colIndexAction + 1;
 				int colIndexResult = colIndexNotes + 1;
 				int colIndexScreenshot = colIndexResult + 1;
 
@@ -233,13 +231,10 @@ namespace LatihanSelenium.Utilities
 				ICell cellHeaderSeq = firstRow.GetCell(colIndexSeq);
 				ICell cellHeaderActor = firstRow.GetCell(colIndexActor);
 				ICell cellHeaderAction = firstRow.GetCell(colIndexAction);
-				ICell cellHeaderReturnTo = firstRow.GetCell(colIndexReturnTo);
 				ICell cellHeaderNotes = firstRow.GetCell(colIndexNotes);
 				ICell cellHeaderResult = firstRow.GetCell(colIndexResult);
 
 				ValidateCellHeaderName(cellHeaderId, workSheetName, colIndexId + 1, "Test Case Id");
-				ValidateCellHeaderName(cellHeaderReturnTo, workSheetName, colIndexReturnTo + 1, "Return To");
-				ValidateCellHeaderName(cellHeaderNotes, workSheetName, colIndexNotes + 1, "Notes");
 				#endregion
 
 				int rowNum = 0;
@@ -271,7 +266,6 @@ namespace LatihanSelenium.Utilities
 								Sequence = int.Parse(TryGetString(currentRow.GetCell(colIndexSeq), workSheetName, cellHeaderSeq.StringCellValue, rowNum)),
 								Actor = TryGetString(currentRow.GetCell(colIndexActor), workSheetName, cellHeaderActor.StringCellValue, rowNum),
 								Action = TryGetString(currentRow.GetCell(colIndexAction), workSheetName, cellHeaderAction.StringCellValue, rowNum),
-								ReturnTo = TryGetString(currentRow.GetCell(colIndexReturnTo), workSheetName, cellHeaderReturnTo.StringCellValue, rowNum),
 								Notes = TryGetString(currentRow.GetCell(colIndexNotes), workSheetName, cellHeaderNotes.StringCellValue, rowNum)
 							};
 
@@ -537,8 +531,8 @@ namespace LatihanSelenium.Utilities
 					if (param is TaskModels taskParam)
 					{
 						sheet = wb.GetSheet(SheetConstant.Task);
-						resultColumnIndex = 6;
-						captureColumnIndex = 7;
+						resultColumnIndex = 5;
+						captureColumnIndex = 6;
 						TaskModels newParam = param as TaskModels ?? new();
 						rowIndex = newParam.Row;
 						testCase = $"{TestCaseConstant.Approval} - {newParam.Action}";
@@ -601,6 +595,11 @@ namespace LatihanSelenium.Utilities
 
 		private const int SM_CXSCREEN = 0;
 		private const int SM_CYSCREEN = 1;
+
+		private static int IntegerParse(string param)
+		{
+			return int.Parse(!string.IsNullOrEmpty(param) ? param : "0");
+		}
 		private static async Task<string> ScreenCapture(AppConfig cfg, TestplanModels param)
 		{
 			try
