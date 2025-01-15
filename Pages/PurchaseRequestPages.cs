@@ -3,13 +3,12 @@ using LatihanSelenium.Locators;
 using LatihanSelenium.Models;
 using LatihanSelenium.Utilities;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
 
 namespace LatihanSelenium.Pages
 {
 	public static class PurchaseRequestPages
 	{
-		public static void HandleTestCase(ChromeDriver driver, AppConfig cfg, TestplanModels plan, ResourceModels param)
+		public static void HandleTestCase(IWebDriver driver, AppConfig cfg, TestplanModels plan, ResourceModels param)
 		{
 			try
 			{
@@ -18,12 +17,12 @@ namespace LatihanSelenium.Pages
 					case TestCaseConstant.Submit:
 						PurchaseRequestModels dataSubmit = param.PurchaseRequests.Where(x => x.TestCaseId.Equals(plan.TestCaseId) && x.DataFor.Equals(DataForConstant.Submit)).FirstOrDefault()!;
 						plan.TestData = PlanHelper.CreateAddress(SheetConstant.PR, dataSubmit.Row);
-						FormPR(driver, cfg, plan, dataSubmit, true);
+						HandleForm(driver, cfg, plan, dataSubmit, true);
 						break;
 					case TestCaseConstant.SaveAsDraft:
 						PurchaseRequestModels dataDraft = param.PurchaseRequests.Where(x => x.TestCaseId.Equals(plan.TestCaseId) && x.DataFor.Equals(DataForConstant.SaveAsDraft)).FirstOrDefault()!;
 						plan.TestData = PlanHelper.CreateAddress(SheetConstant.PR, dataDraft.Row);
-						FormPR(driver, cfg, plan, dataDraft);
+						HandleForm(driver, cfg, plan, dataDraft);
 						break;
 					default: break;
 				}
@@ -56,14 +55,17 @@ namespace LatihanSelenium.Pages
 			}
 		}
 
-		public static void FormPR(ChromeDriver driver, AppConfig cfg, TestplanModels plan, PurchaseRequestModels param, bool isSubmit = false)
+		public static void HandleForm(IWebDriver driver, AppConfig cfg, TestplanModels plan, PurchaseRequestModels param, bool isSubmit = false, bool isResubmit = false)
 		{
 			try
 			{
-				AutomationHelpers.ElementExist(driver, DashboardLocators.Topbar);
+				if (!isResubmit)
+				{
+					AutomationHelpers.ElementExist(driver, DashboardLocators.Topbar);
 
-				//Mengarahkan ke halaman Create PR
-				driver.Navigate().GoToUrl(UrlConstant.CreatePR);
+					//Mengarahkan ke halaman Create PR
+					driver.Navigate().GoToUrl(UrlConstant.CreatePR);
+				}
 
 				//Select PR Type
 				AutomationHelpers.SelectElement(driver, PurchaseRequestLocators.FieldPRList, PurchaseRequestLocators.PRList, param.PRType);
@@ -93,20 +95,44 @@ namespace LatihanSelenium.Pages
 					AutomationHelpers.UploadFile(driver, PurchaseRequestLocators.BtnAdd, path);
 				}
 
+				if (!isResubmit)
+				{
+					if (isSubmit)
+					{
+						//klik button submit
+					}
+					else
+					{
+						//klik button save as draft
+					}
+
+					string msg = AutomationHelpers.GetAlertMessage(driver, GlobalLocators.AlertSuccess);
+					if (AutomationHelpers.ValidateAlert(msg, GlobalConfig.Config.SuccessMessages))
+					{
+						plan.Status = StatusConstant.Success;
+						plan.Remarks = $"{plan.TestCase} {plan.ModuleName} is Successfully.";
+						plan.RequestNumber = param.PRSubject; // harus cari pr no dari list setelah submit
+					}
+					else
+					{
+						throw new Exception(msg);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				plan.Status = StatusConstant.Fail;
+				plan.Remarks = $"{plan.TestCase} {plan.ModuleName} is Fail. Error : {ex.Message}";
+			}
+			finally
+			{
 				if (isSubmit)
 				{
-					//klik button submit
-				}
-				else
-				{
-					//klik button save as draft
+					ExcelHelpers.WriteAutomationResult(cfg, plan);
+					Thread.Sleep(GlobalConfig.Config.WaitWriteResultInSecond);
 				}
 			}
-			catch (Exception ex) 
-			{ 
-				Console.WriteLine(ex);
-			}
-			
+
 		}
 	}
 }

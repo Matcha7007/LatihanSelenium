@@ -1,7 +1,7 @@
 ﻿using LatihanSelenium.Constants;
 using LatihanSelenium.Models;
-using OpenQA.Selenium.Chrome;
 using LatihanSelenium.Pages;
+using OpenQA.Selenium;
 
 namespace LatihanSelenium.Utilities
 {
@@ -11,7 +11,7 @@ namespace LatihanSelenium.Utilities
 		{
 			try
 			{
-				ResourceModels resourceData = ExcelHelper.ReadExcel(GlobalConfig.Config);
+				ResourceModels resourceData = ExcelHelpers.ReadExcel(GlobalConfig.Config);
 
 				foreach (var plan in resourceData.Testplans)
 				{
@@ -20,7 +20,7 @@ namespace LatihanSelenium.Utilities
 					Console.WriteLine("------------------------------------------------------");
 					Console.WriteLine($"Running Unit Test {plan.TestCase} - {plan.ModuleName}");
 					Console.WriteLine("------------------------------------------------------");
-					ChromeDriver driver = new();
+					IWebDriver driver = DriverManagerHelpers.NewWebDriver(GlobalConfig.Config.Driver);
 
 					try
 					{
@@ -47,7 +47,7 @@ namespace LatihanSelenium.Utilities
 			}
 		}
 
-		private static void SwitchCaseTest(AppConfig cfg, ChromeDriver driver, TestplanModels plan, List<UserModels> users, ResourceModels param)
+		private static void SwitchCaseTest(AppConfig cfg, IWebDriver driver, TestplanModels plan, List<UserModels> users, ResourceModels param)
 		{
 			try
 			{

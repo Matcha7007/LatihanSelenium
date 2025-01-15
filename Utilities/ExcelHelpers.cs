@@ -1,8 +1,9 @@
 ﻿using LatihanSelenium.Constants;
 using LatihanSelenium.Models;
-
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace LatihanSelenium.Utilities
 {
@@ -14,7 +15,7 @@ namespace LatihanSelenium.Utilities
 		}
 	}
 
-	public static class ExcelHelper
+	public static class ExcelHelpers
 	{
 		private static Dictionary<string, PurchaseRequestModels> _PR = [];
 
@@ -445,7 +446,194 @@ namespace LatihanSelenium.Utilities
 		}
 		#endregion
 
+		#region Write Excel		
+		public static async void WriteAutomationResult(AppConfig cfg, TestplanModels param)
+		{
+			try
+			{
+				string dateNow = DateTime.Now.ToString("yyyy/MM/dd");
+				string dateTimeNow = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+
+				using (var fs = new FileStream(cfg.ExcelPath, FileMode.Open, FileAccess.Read))
+				{
+					var wb = new XSSFWorkbook(fs);
+					ISheet sheet = wb.GetSheet("TestPlan");
+
+					IRow row = sheet.GetRow(param.Row);
+					var cell4 = row.CreateCell(4);
+					cell4.SetCellValue(param.Status);
+					cell4.CellStyle.Alignment = HorizontalAlignment.Center;
+					var cell5 = row.CreateCell(5);
+					cell5.SetCellValue(dateTimeNow);
+					cell5.CellStyle.Alignment = HorizontalAlignment.Center;
+					var cell6 = row.CreateCell(6);
+					cell6.SetCellValue(param.Remarks);
+					cell6.CellStyle.Alignment = HorizontalAlignment.Left;
+
+					string filePath = string.Empty;
+					try
+					{
+						filePath = await ScreenCapture(cfg, param);
+					}
+					catch (Exception ex)
+					{
+						Console.WriteLine($"Screen Capture failed: {ex.Message}");
+					}
+
+					if (!string.IsNullOrEmpty(filePath))
+					{
+						var cellScreenCapture = row.CreateCell(7);
+						ICreationHelper creationHelper = wb.GetCreationHelper();
+						IHyperlink hyperlink = creationHelper.CreateHyperlink(HyperlinkType.File);
+						hyperlink.Address = filePath;
+						cellScreenCapture.Hyperlink = hyperlink;
+						cellScreenCapture.CellStyle.Alignment = HorizontalAlignment.Center;
+						cellScreenCapture.SetCellValue("Open File");
+					}
+
+					if (!string.IsNullOrEmpty(param.TestData))
+					{
+						var testData = row.CreateCell(8);
+						ICreationHelper creationHelper = wb.GetCreationHelper();
+						IHyperlink hyperlink = creationHelper.CreateHyperlink(HyperlinkType.Document);
+						hyperlink.Address = param.TestData;
+						testData.Hyperlink = hyperlink;
+						testData.CellStyle.Alignment = HorizontalAlignment.Center;
+						testData.SetCellValue("Go To Data");
+					}
+
+					var cell9 = row.CreateCell(9);
+					cell9.SetCellValue(param.RequestNumber);
+					cell9.CellStyle.Alignment = HorizontalAlignment.Center;
+
+					using (var outputStream = new FileStream(cfg.ExcelPath, FileMode.Create, FileAccess.Write))
+					{
+						wb.Write(outputStream);
+						outputStream.Close();
+					}
+					fs.Close();
+					wb.Close();
+					Thread.Sleep(1500);
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Fail WriteAutomationResult : {ex.Message}");
+			}
+		}
+		public static async void WriteApproval<T>(AppConfig cfg, T param, string moduleName) where T : class
+		{
+			try
+			{
+				string dateTimeNow = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+
+				using (var fs = new FileStream(cfg.ExcelPath, FileMode.Open, FileAccess.Read))
+				{
+					var wb = new XSSFWorkbook(fs);
+					ISheet sheet;
+					int resultColumnIndex, captureColumnIndex, rowIndex;
+					string testCase, status;
+
+					if (param is TaskModels taskParam)
+					{
+						sheet = wb.GetSheet(SheetConstant.Task);
+						resultColumnIndex = 6;
+						captureColumnIndex = 7;
+						TaskModels newParam = param as TaskModels ?? new();
+						rowIndex = newParam.Row;
+						testCase = $"{TestCaseConstant.Approval} - {newParam.Action}";
+						status = newParam.Result == StatusConstant.Success ? $"{StatusConstant.Success} - {newParam.Action} with Document Number : {newParam.DataNumber}" : newParam.Result;
+					}
+					else
+					{
+						throw new InvalidOperationException("Unsupported parameter type.");
+					}
+
+					var row = sheet.GetRow(rowIndex);
+					ICell cellResult = row.CreateCell(resultColumnIndex);
+					cellResult.CellStyle.Alignment = HorizontalAlignment.Left;
+					cellResult.SetCellValue(status);
+
+					TestplanModels plan = new()
+					{
+						TestCase = testCase,
+						ModuleName = moduleName,
+						Status = status.Contains("Error") ? "Fail" : "Success"
+					};
+
+					string filePath = string.Empty;
+					try
+					{
+						filePath = await ScreenCapture(cfg, plan);
+					}
+					catch (Exception ex)
+					{
+						Console.WriteLine($"Screen Capture failed: {ex.Message}");
+					}
+
+					if (!string.IsNullOrEmpty(filePath))
+					{
+						var cellScreenCapture = row.CreateCell(captureColumnIndex);
+						var creationHelper = wb.GetCreationHelper();
+						var hyperlink = creationHelper.CreateHyperlink(HyperlinkType.File);
+						hyperlink.Address = filePath;
+						cellScreenCapture.Hyperlink = hyperlink;
+						cellScreenCapture.CellStyle.Alignment = HorizontalAlignment.Center;
+						cellScreenCapture.SetCellValue("Open File");
+					}
+
+					using (var outputStream = new FileStream(cfg.ExcelPath, FileMode.Create, FileAccess.Write))
+					{
+						wb.Write(outputStream);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Fail WriteApproval: {ex.Message}");
+			}
+		}
+		#endregion
+
 		#region Private Function
+		[DllImport("user32.dll")]
+		private static extern int GetSystemMetrics(int nIndex);
+
+		private const int SM_CXSCREEN = 0;
+		private const int SM_CYSCREEN = 1;
+		private static async Task<string> ScreenCapture(AppConfig cfg, TestplanModels param)
+		{
+			try
+			{
+				string dateNow = DateTime.Now.ToString("yyyy-MM-dd");
+				string dateTime = DateTime.Now.ToString("HHmmss");
+				var filePath = Path.Combine(dateNow, $"{dateTime}_{param.TestCase}_{param.ModuleName}_{param.Status}.png");
+				string fullFilePath = Path.Combine(cfg.ScreenCapturePath, filePath);
+				DirectoryCheck(fullFilePath);
+
+				// Capture the screen
+				int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+				int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+				using var bitmap = new Bitmap(screenWidth, screenHeight);
+				using var graphics = Graphics.FromImage(bitmap);
+				graphics.CopyFromScreen(0, 0, 0, 0, bitmap.Size);
+				bitmap.Save(fullFilePath, System.Drawing.Imaging.ImageFormat.Png);
+
+				return $"ScreenCapture\\{filePath}";
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Failed to get screen capture {param.ModuleName} - {param.TestCase}: {ex.Message}");
+				return "";
+			}
+		}
+		private static void DirectoryCheck(string filePath)
+		{
+			var directory = Path.GetDirectoryName(filePath);
+			if (!Directory.Exists(directory))
+				Directory.CreateDirectory(directory!);
+		}
 		private static string CheckErrorReadExcel(string error)
 		{
 			return error.Contains("Input string was not in a correct format or must be in numeric format.") ? $"{error} Test Case Id or Sequence cannot be empty." : error;

@@ -1,4 +1,6 @@
-﻿namespace LatihanSelenium.Models
+﻿using LatihanSelenium.Constants;
+
+namespace LatihanSelenium.Models
 {
 	public class AppConfig
 	{
@@ -14,6 +16,7 @@
 		public int WaitRetrySearchTaskInMiliSecond { get; set; }
 		public string[] ErrorMessages { get; set; } = [];
 		public string[] SuccessMessages { get; set; } = [];
+		public string Driver { get; set; } = DriverConstant.Chrome;
 	}
 
 	public static class GlobalConfig

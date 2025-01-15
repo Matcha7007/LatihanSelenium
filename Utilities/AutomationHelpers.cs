@@ -1,7 +1,7 @@
 ﻿using InputSimulatorEx;
 using InputSimulatorEx.Native;
+using LatihanSelenium.Models;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 
@@ -18,11 +18,43 @@ namespace LatihanSelenium.Utilities
 		[DllImport("user32.dll", SetLastError = true)]
 		private static extern bool SetForegroundWindow(IntPtr hWnd);
 
-		public static void FillElement(IWebDriver driver, By locator, string param)
+		public static bool ValidateAlert(string alert, params string[] keywords)
 		{
+			return keywords.Any(keyword => alert.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+		}
+
+		public static string GetAlertMessage(IWebDriver driver, By locator, int sec = -1)
+		{
+			sec = sec == -1 ? GlobalConfig.Config.WaitElementInSecond : sec;
 			try
 			{
-				ElementExist(driver, locator);
+				ElementExist(driver, locator, sec);
+				return driver.FindElement(locator).Text;
+			}
+			catch (NoAlertPresentException)
+			{
+				Console.WriteLine("No alert is present.");
+				return "No alert is present.";
+			}
+		}
+		public static void ScrollToElement(IWebDriver driver, By locator, int sec = -1)
+		{
+			sec = sec == -1 ? GlobalConfig.Config.WaitElementInSecond : sec;
+			try
+			{
+				ElementExist(driver, locator, sec);
+				var element = driver.FindElement(locator);
+				((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].scrollIntoView(true);", element);
+			}
+			catch (Exception ex) { throw new Exception(ex.Message); }
+		}
+
+		public static void FillElement(IWebDriver driver, By locator, string param, int sec = -1)
+		{
+			sec = sec == -1 ? GlobalConfig.Config.WaitElementInSecond : sec;
+			try
+			{
+				ElementExist(driver, locator, sec);
 				driver.FindElement(locator).SendKeys(param);
 			}
 			catch (Exception ex) 
@@ -31,18 +63,20 @@ namespace LatihanSelenium.Utilities
 			}
 		}
 
-		public static void FillElementNonMandatory(IWebDriver driver, By locator, string param)
+		public static void FillElementNonMandatory(IWebDriver driver, By locator, string param, int sec = -1)
 		{
-			if (!string.IsNullOrEmpty(param)) FillElement(driver, locator, param);
+			sec = sec == -1 ? GlobalConfig.Config.WaitElementInSecond : sec;
+			if (!string.IsNullOrEmpty(param)) FillElement(driver, locator, param, sec);
 		}
 
-		public static void SelectElement(IWebDriver driver, By locatorField, By locatorList, string param)
+		public static void SelectElement(IWebDriver driver, By locatorField, By locatorList, string param, int sec = -1)
 		{
+			sec = sec == -1 ? GlobalConfig.Config.WaitElementInSecond : sec;
 			try
 			{
-				ElementExist(driver, locatorField);
+				ElementExist(driver, locatorField, sec);
 				driver.FindElement(locatorField).Click();
-				ElementExist(driver, locatorList);
+				ElementExist(driver, locatorList, sec);
 				var options = driver.FindElements(locatorList);
 
 				foreach (var option in options)
@@ -59,16 +93,18 @@ namespace LatihanSelenium.Utilities
 			}
 		}
 
-		public static void SelectElementNonMandatory(IWebDriver driver, By locatorField, By locatorList, string param)
+		public static void SelectElementNonMandatory(IWebDriver driver, By locatorField, By locatorList, string param, int sec = -1)
 		{
-			if (!string.IsNullOrEmpty(param)) SelectElement(driver, locatorField, locatorList, param);
+			sec = sec == -1 ? GlobalConfig.Config.WaitElementInSecond : sec;
+			if (!string.IsNullOrEmpty(param)) SelectElement(driver, locatorField, locatorList, param, sec);
 		}
 
-		public static void ClickElement(IWebDriver driver, By locator)
+		public static void ClickElement(IWebDriver driver, By locator, int sec = -1)
 		{
+			sec = sec == -1 ? GlobalConfig.Config.WaitElementInSecond : sec;
 			try
 			{
-				WebDriverWait wait = new(driver, TimeSpan.FromSeconds(10));
+				WebDriverWait wait = new(driver, TimeSpan.FromSeconds(sec));
 				wait.Until(ExpectedConditions.ElementToBeClickable(locator));
 
 				driver.FindElement(locator).Click();
@@ -87,11 +123,12 @@ namespace LatihanSelenium.Utilities
 			}
 		}
 
-		public static void ElementExist(IWebDriver driver, By locator)
+		public static void ElementExist(IWebDriver driver, By locator, int sec = -1)
 		{
+			sec = sec == -1 ? GlobalConfig.Config.WaitElementInSecond : sec;
 			try
 			{
-				WebDriverWait wait = new(driver, TimeSpan.FromSeconds(10));
+				WebDriverWait wait = new(driver, TimeSpan.FromSeconds(sec));
 				wait.Until(ExpectedConditions.ElementExists(locator));
 			}
 			catch (WebDriverTimeoutException ex)
@@ -149,7 +186,7 @@ namespace LatihanSelenium.Utilities
 			if (!string.IsNullOrEmpty(filePath)) UploadFile(driver, locator, filePath, title);
 		}
 
-		public static void ClickInteractableElementUsingJS(EdgeDriver driver, By locator)
+		public static void ClickInteractableElementUsingJS(IWebDriver driver, By locator)
 		{
 			try
 			{

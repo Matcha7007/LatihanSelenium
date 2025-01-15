@@ -2,6 +2,14 @@
 
 namespace LatihanSelenium.Constants
 {
+	public class DriverConstant
+	{
+		public const string Chrome = "Chrome";
+		public const string Edge = "Edge";
+		public const string Firefox = "Firefox";
+		public const string Safari = "Safari";
+	}
+
 	public class ModuleNameConstant
 	{
 		public const string PR = "Purchase Request";
@@ -51,6 +59,7 @@ namespace LatihanSelenium.Constants
 		public const string Reject = "Reject";
 		public const string Return = "Return";		
 		public const string Revise = "Revise";
+		public const string ReSubmit = "Re Submit";
 	}
 
 	public class SheetConstant
@@ -71,6 +80,15 @@ namespace LatihanSelenium.Constants
 
 	public class UrlConstant
 	{
-		public static string CreatePR = $"{GlobalConfig.Config.Url}/app/purchase-request/list";
+		private static string BaseUrl = $"{GlobalConfig.Config.Url}/app";
+		private const string Create = "create";
+		private const string List = "list?tabActive=list";
+		private const string PendingTask = "list?tabActive=pending-task";
+
+		#region Url
+		public static string CreatePR = $"{BaseUrl}/purchase-request/{Create}";
+		public static string ListPR = $"{BaseUrl}/purchase-request/{List}";
+		public static string PendingTaskPR = $"{BaseUrl}/purchase-request/{PendingTask}";
+		#endregion
 	}
 }
