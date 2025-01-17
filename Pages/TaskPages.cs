@@ -81,7 +81,7 @@ namespace LatihanSelenium.Pages
 							case ModuleNameConstant.PR:
 								PurchaseRequestModels prParam = allParam.PurchaseRequests.Where(x => x.TestCaseId.Equals(param.TestCaseId) && x.DataFor.Equals(DataForConstant.ReSubmit) && x.Sequence.Equals(param.Sequence)).FirstOrDefault()!;
 								if (prParam != null)
-									PurchaseRequestPages.HandleForm(driver, cfg, plan, prParam, false);
+									PurchaseRequestPages.HandleForm(driver, cfg, plan, prParam, false, true);
 								break;							
 							default:
 								break;

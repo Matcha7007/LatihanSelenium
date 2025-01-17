@@ -55,7 +55,9 @@ namespace LatihanSelenium.Utilities
 			try
 			{
 				ElementExist(driver, locator, sec);
-				driver.FindElement(locator).SendKeys(param);
+				var element = driver.FindElement(locator);
+				element.Clear();
+				element.SendKeys(param);
 			}
 			catch (Exception ex) 
 			{
