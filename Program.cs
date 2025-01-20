@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using System.Text;
 
 #region App Setting
-var basePath = "D:\\AutomatedTestingQuickAcq\\LatihanSelenium";
+var basePath = "C:\\Users\\chris\\Documents\\GitHub\\LatihanSelenium";
 
 string jsonString = File.ReadAllText($"{basePath}\\appsettings.json", Encoding.Default);
 AppConfig cfg = JsonConvert.DeserializeObject<AppConfig>(jsonString)!;

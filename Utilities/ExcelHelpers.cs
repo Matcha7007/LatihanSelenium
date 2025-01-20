@@ -18,8 +18,9 @@ namespace LatihanSelenium.Utilities
 	public static class ExcelHelpers
 	{
 		private static Dictionary<string, PurchaseRequestModels> _PR = [];
+        private static Dictionary<string, RequestForQuotationModels> _RFQ = [];
 
-		public static ResourceModels ReadExcel(AppConfig cfg)
+        public static ResourceModels ReadExcel(AppConfig cfg)
 		{
 			ResourceModels result = new();
 			try
@@ -208,7 +209,153 @@ namespace LatihanSelenium.Utilities
 			}
 		}
 
-		private static List<TaskModels> ReadTask(IWorkbook wb, List<TestplanModels> plans)
+        private static List<RequestForQuotationModels> ReadRFQ(IWorkbook wb, List<TestplanModels> plans)
+        {
+            List<RequestForQuotationModels> result = [];
+            plans = plans.Where(x => x.ModuleName == ModuleNameConstant.RFQ).ToList();
+            try
+            {
+                string workSheetName = SheetConstant.RFQ;
+                ISheet sheet = wb.GetSheet(workSheetName);
+
+                #region Validate Column
+                int colIndexId = 0;
+                int colIndexDataFor = colIndexId + 1;
+                int colIndexSeq = colIndexDataFor + 1;
+                int colIndexRFQSubject = colIndexSeq + 1;
+                int colIndexRFQType = colIndexRFQSubject + 1;
+                int colIndexTenderBriefingDate = colIndexRFQType + 1;
+                int colIndexQuotationSubmissionDate = colIndexTenderBriefingDate + 1;
+                int colIndexTargetAppointmentDate = colIndexQuotationSubmissionDate + 1;
+                int colIndexRemarks = colIndexTargetAppointmentDate + 1;
+                int colIndexGoodsItemName = colIndexRemarks + 1;
+                int colIndexGoodsItemRemarks = colIndexGoodsItemName + 1;
+                int colIndexServicesItemName = colIndexGoodsItemRemarks + 1;
+                int colIndexServicesItemRemarks = colIndexServicesItemName + 1;
+                int colIndexInternalAttachmentPath = colIndexServicesItemRemarks + 1;
+                int colIndexVendorAttachmentPath = colIndexInternalAttachmentPath + 1;
+
+                IRow firstRow = sheet.GetRow(0);
+                ICell cellHeaderId = firstRow.GetCell(colIndexId);
+                ICell cellHeaderDataFor = firstRow.GetCell(colIndexDataFor);
+                ICell cellHeaderSeq = firstRow.GetCell(colIndexSeq);
+                ICell cellHeaderRFQSubject = firstRow.GetCell(colIndexRFQSubject);
+                ICell cellHeaderRFQType = firstRow.GetCell(colIndexRFQType);
+                ICell cellHeaderTenderBriefingDate = firstRow.GetCell(colIndexTenderBriefingDate);
+                ICell cellHeaderQuotationSubmissionDate = firstRow.GetCell(colIndexQuotationSubmissionDate);
+                ICell cellHeaderTargetAppointmentDate = firstRow.GetCell(colIndexTargetAppointmentDate);
+                ICell cellHeaderRemarks = firstRow.GetCell(colIndexRemarks);
+                ICell cellHeaderGoodsItemName = firstRow.GetCell(colIndexGoodsItemName);
+                ICell cellHeaderGoodsItemRemarks = firstRow.GetCell(colIndexGoodsItemRemarks);
+                ICell cellHeaderServicesItemName = firstRow.GetCell(colIndexServicesItemName);
+                ICell cellHeaderServicesItemRemarks = firstRow.GetCell(colIndexServicesItemRemarks);
+                ICell cellHeaderInternalAttachmentPath = firstRow.GetCell(colIndexInternalAttachmentPath);
+                ICell cellHeaderVendorAttachmentPath = firstRow.GetCell(colIndexVendorAttachmentPath);
+
+                ValidateCellHeaderName(cellHeaderId, workSheetName, colIndexId + 1, "Test Case Id");
+                ValidateCellHeaderName(cellHeaderDataFor, workSheetName, colIndexDataFor + 1, "Data For");
+                ValidateCellHeaderName(cellHeaderRFQSubject, workSheetName, colIndexRFQSubject + 1, "RFQ Subject");
+                ValidateCellHeaderName(cellHeaderRFQType, workSheetName, colIndexRFQType + 1, "RFQ Type");
+                ValidateCellHeaderName(cellHeaderTenderBriefingDate, workSheetName, colIndexTenderBriefingDate + 1, "Tender Briefing Date");
+                ValidateCellHeaderName(cellHeaderQuotationSubmissionDate, workSheetName, colIndexQuotationSubmissionDate + 1, "Quotation Submission Due Date");
+                ValidateCellHeaderName(cellHeaderTargetAppointmentDate, workSheetName, colIndexTargetAppointmentDate + 1, "Target Appointment Date");
+                ValidateCellHeaderName(cellHeaderRemarks, workSheetName, colIndexRemarks + 1, "Remarks");
+                ValidateCellHeaderName(cellHeaderGoodsItemName, workSheetName, colIndexGoodsItemName + 1, "Goods Item Name");
+                ValidateCellHeaderName(cellHeaderGoodsItemRemarks, workSheetName, colIndexGoodsItemRemarks + 1, "Goods Item Remarks");
+                ValidateCellHeaderName(cellHeaderServicesItemName, workSheetName, colIndexServicesItemName + 1, "Services Item Name");
+                ValidateCellHeaderName(cellHeaderServicesItemRemarks, workSheetName, colIndexServicesItemRemarks + 1, "Services Item Remarks");
+                ValidateCellHeaderName(cellHeaderInternalAttachmentPath, workSheetName, colIndexInternalAttachmentPath + 1, "Internal Attachment Path");
+                ValidateCellHeaderName(cellHeaderVendorAttachmentPath, workSheetName, colIndexVendorAttachmentPath + 1, "Vendor Attachment Path");
+                #endregion
+
+                int rowNum = 0;
+
+                while (true)
+                {
+                    rowNum++;
+                    IRow? currentRow = sheet.GetRow(rowNum);
+                    if (currentRow == null)
+                    {
+                        break;
+                    }
+                    if (IsRowEmpty(currentRow, colIndexVendorAttachmentPath))
+                    {
+                        break;
+                    }
+
+                    #region Assign Param
+                    string idStr = TryGetString(currentRow.GetCell(colIndexId), workSheetName, cellHeaderId.StringCellValue, rowNum);
+                    string seqStr = TryGetString(currentRow.GetCell(colIndexSeq), workSheetName, cellHeaderSeq.StringCellValue, rowNum);
+                    string dataFor = TryGetString(currentRow.GetCell(colIndexDataFor), workSheetName, cellHeaderDataFor.StringCellValue, rowNum);
+                    if (!string.IsNullOrEmpty(idStr))
+                    {
+                        RequestForQuotationModels param = new();
+                        int id = int.Parse(idStr);
+                        if (plans.Any(x => x.TestCaseId.Equals(id)))
+                        {
+                            string goodsItemName = TryGetString(currentRow.GetCell(colIndexGoodsItemName), workSheetName, cellHeaderGoodsItemName.StringCellValue, rowNum);
+                            RFQItem goodsItem = new();
+                            if (!string.IsNullOrEmpty(goodsItemName))
+                            {
+                                goodsItem = new()
+                                {
+                                    Name = goodsItemName,
+									Remark = TryGetString(currentRow.GetCell(colIndexGoodsItemRemarks), workSheetName, cellHeaderGoodsItemRemarks.StringCellValue, rowNum)
+                                };
+                            }
+
+                            string servicesItemName = TryGetString(currentRow.GetCell(colIndexServicesItemName), workSheetName, cellHeaderServicesItemName.StringCellValue, rowNum);
+                            RFQItem servicesItem = new();
+                            if (!string.IsNullOrEmpty(servicesItemName))
+                            {
+                                servicesItem = new()
+                                {
+                                    Name = servicesItemName,
+                                    Remark = TryGetString(currentRow.GetCell(colIndexServicesItemRemarks), workSheetName, cellHeaderServicesItemRemarks.StringCellValue, rowNum)
+                                };
+                            }
+
+                            string InternalAttachmentPath = TryGetString(currentRow.GetCell(colIndexInternalAttachmentPath), workSheetName, cellHeaderInternalAttachmentPath.StringCellValue, rowNum);
+                            string VendorAttachmentPath = TryGetString(currentRow.GetCell(colIndexVendorAttachmentPath), workSheetName, cellHeaderVendorAttachmentPath.StringCellValue, rowNum);
+
+                            if (_RFQ.TryGetValue($"{idStr}{dataFor}{seqStr}", out RequestForQuotationModels? value))
+                            {
+                                if (!string.IsNullOrEmpty(goodsItem.Name)) value.GoodsItems.Add(goodsItem);
+                                if (!string.IsNullOrEmpty(servicesItem.Name)) value.ServicesItems.Add(servicesItem);
+                                if (!string.IsNullOrEmpty(InternalAttachmentPath)) value.InternalAttachmentPaths.Add(InternalAttachmentPath);
+                            }
+                            else
+                            {
+                                param.Row = rowNum;
+                                param.TestCaseId = id;
+                                param.DataFor = dataFor;
+                                param.Sequence = !string.IsNullOrEmpty(seqStr) ? int.Parse(seqStr) : 1;
+                                param.RFQSubject = TryGetString(currentRow.GetCell(colIndexRFQSubject), workSheetName, cellHeaderRFQSubject.StringCellValue, rowNum);
+                                param.RFQType = TryGetString(currentRow.GetCell(colIndexRFQType), workSheetName, cellHeaderRFQType.StringCellValue, rowNum);
+                                param.TenderBriefingDate = TryGetString(currentRow.GetCell(colIndexTenderBriefingDate), workSheetName, cellHeaderTenderBriefingDate.StringCellValue, rowNum);
+                                param.QuotationSubmissionDate = TryGetString(currentRow.GetCell(colIndexQuotationSubmissionDate), workSheetName, cellHeaderQuotationSubmissionDate.StringCellValue, rowNum);
+								param.TargetAppointmentDate = TryGetString(currentRow.GetCell(colIndexTargetAppointmentDate), workSheetName, cellHeaderTargetAppointmentDate.StringCellValue, rowNum);
+                                param.Remarks = TryGetString(currentRow.GetCell(colIndexRemarks), workSheetName, cellHeaderRemarks.StringCellValue, rowNum);
+                                if (!string.IsNullOrEmpty(goodsItem.Name)) param.GoodsItems.Add(goodsItem);
+                                if (!string.IsNullOrEmpty(servicesItem.Name)) param.ServicesItems.Add(servicesItem);
+                                if (!string.IsNullOrEmpty(InternalAttachmentPath)) param.InternalAttachmentPaths.Add(InternalAttachmentPath);
+                                if (!string.IsNullOrEmpty(VendorAttachmentPath)) param.VendorAttachmentPaths.Add(VendorAttachmentPath);
+                                _RFQ.Add($"{idStr}{dataFor}{seqStr}", param);
+                            }
+                        }
+                    }
+                    #endregion
+                }
+                result.AddRange(_RFQ.Values);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Read Sheet {SheetConstant.RFQ} is Fail : {CheckErrorReadExcel(ex.Message)}");
+            }
+        }
+
+        private static List<TaskModels> ReadTask(IWorkbook wb, List<TestplanModels> plans)
 		{
 			List<TaskModels> result = [];
 			plans = plans.Where(x => x.TestCase == TestCaseConstant.Approval).ToList();

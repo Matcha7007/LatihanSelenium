@@ -204,13 +204,13 @@ namespace LatihanSelenium.Pages
 				case ModuleNameConstant.RFQ:
 					xpath = new()
 					{
-						//Search = PurchaseRequestTaskLocators.Search,
-						//RowTask = PurchaseRequestTaskLocators.RowTask,
-						//ApprovalRemark = PurchaseRequestTaskLocators.ApprovalRemark,
-						//BtnApprove = PurchaseRequestTaskLocators.BtnApprove,
-						//BtnRevise = PurchaseRequestTaskLocators.BtnRevise,
-						//BtnReject = PurchaseRequestTaskLocators.BtnReject,
-						//UrlPendingTask = UrlConstant.PendingTaskPR,
+						Search = RequestForQuotationTaskLocators.Search,
+						RowTask = RequestForQuotationTaskLocators.RowTask,
+						ApprovalRemark = RequestForQuotationTaskLocators.ApprovalRemark,
+						BtnApprove = RequestForQuotationTaskLocators.BtnApprove,
+						BtnRevise = RequestForQuotationTaskLocators.BtnRevise,
+						BtnReject = RequestForQuotationTaskLocators.BtnReject,
+						UrlPendingTask = UrlConstant.PendingTaskRFQ,
 						Module = ModuleNameConstant.RFQ
 					};
 					break;

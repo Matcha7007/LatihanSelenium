@@ -69,6 +69,7 @@ namespace LatihanSelenium.Constants
 		public const string TestPlan = "TestPlan";
 		public const string Task = "Task";
 		public const string PR = "PurchaseRequest";
+		public const string RFQ = "RequestForQuotation";
 	}
 
 	public class PrTypeConstant
@@ -78,7 +79,13 @@ namespace LatihanSelenium.Constants
 		public const string DirectPurchase = "Direct Purchase";
 	}
 
-	public class UrlConstant
+    public class RfqTypeConstant
+    {
+        public const string DirectAppointment = "Direct Appointment";
+        public const string Tender ="Tender";
+    }
+
+    public class UrlConstant
 	{
 		private static string BaseUrl = $"{GlobalConfig.Config.Url}/app";
 		private const string Create = "create";
@@ -89,6 +96,11 @@ namespace LatihanSelenium.Constants
 		public static string CreatePR = $"{BaseUrl}/purchase-request/{Create}";
 		public static string ListPR = $"{BaseUrl}/purchase-request/{List}";
 		public static string PendingTaskPR = $"{BaseUrl}/purchase-request/{PendingTask}";
-		#endregion
-	}
+
+        public static string CreateRFQ = $"{BaseUrl}/rfq/{Create}";
+        public static string ListRFQ = $"{BaseUrl}/rfq/{List}";
+        public static string PendingTaskRFQ = $"{BaseUrl}/rfq/{PendingTask}";
+
+        #endregion
+    }
 }
