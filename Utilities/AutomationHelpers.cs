@@ -1,5 +1,8 @@
 ﻿using InputSimulatorEx;
 using InputSimulatorEx.Native;
+
+using LatihanSelenium.Constants;
+using LatihanSelenium.Locators;
 using LatihanSelenium.Models;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
@@ -145,6 +148,12 @@ namespace LatihanSelenium.Utilities
 			{
 				throw new Exception(ex.ToString());
 			}
+		}
+
+		public static void NavigateTo(IWebDriver driver, string url)
+		{
+			ElementExist(driver, DashboardLocators.Topbar);
+			driver.Navigate().GoToUrl(url);
 		}
 
 		public static void UploadFile(IWebDriver driver, By locator, string filePath, string title = "Open")

@@ -61,10 +61,7 @@ namespace LatihanSelenium.Pages
 			{
 				if (!isResubmit)
 				{
-					AutomationHelpers.ElementExist(driver, DashboardLocators.Topbar);
-
-					//Mengarahkan ke halaman Create PR
-					driver.Navigate().GoToUrl(UrlConstant.CreatePR);
+					AutomationHelpers.NavigateTo(driver, UrlConstant.CreatePR);
 				}
 
                 //Create PR Header Section

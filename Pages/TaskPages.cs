@@ -149,7 +149,7 @@ namespace LatihanSelenium.Pages
 			int retryCount = 1;
 			try
 			{
-				driver.Navigate().GoToUrl(locator.UrlPendingTask);
+				AutomationHelpers.NavigateTo(driver, locator.UrlPendingTask);
 
 				AutomationHelpers.ElementExist(driver, locator.Search);
 
