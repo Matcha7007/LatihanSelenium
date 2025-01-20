@@ -109,6 +109,7 @@ namespace LatihanSelenium.Pages
 						if (param.Action.Equals(ApprovalConstant.Reject, StringComparison.OrdinalIgnoreCase))
 							AutomationHelpers.ClickElement(driver, locator.BtnReject);
 
+						PageHelpers.ConfirmAlert(driver);
 						Thread.Sleep(500);
 						string msg = AutomationHelpers.GetAlertMessage(driver, GlobalLocators.AlertSuccess);
 						if (AutomationHelpers.ValidateAlert(msg, GlobalConfig.Config.SuccessMessages))

@@ -1,4 +1,6 @@
-﻿using OpenQA.Selenium;
+﻿using LatihanSelenium.Locators;
+
+using OpenQA.Selenium;
 
 namespace LatihanSelenium.Utilities
 {
@@ -18,6 +20,12 @@ namespace LatihanSelenium.Utilities
 			{ 
 				throw new Exception($"Error trying to get the document number of {moduleName} with parameter {param}. Msg {ex}"); 
 			}
+		}
+
+		public static void ConfirmAlert(IWebDriver driver)
+		{
+			AutomationHelpers.ElementExist(driver, GlobalLocators.ConfirmAlertBox);
+			AutomationHelpers.ClickElement(driver, GlobalLocators.ConfirmAlertYes);
 		}
 	}
 }

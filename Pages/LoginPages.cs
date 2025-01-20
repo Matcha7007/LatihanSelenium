@@ -22,6 +22,8 @@ namespace LatihanSelenium.Pages
 
 				//Klik button login
 				AutomationHelpers.ClickElement(driver, LoginLocators.BtnLogin);
+
+				driver.Manage().Window.FullScreen();
 			}
 			catch (Exception ex)
 			{
