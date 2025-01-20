@@ -36,7 +36,7 @@ namespace LatihanSelenium.Locators
         public static By PriceGoodsItem = By.XPath("//input[@id='form-create-pr_goods_price_0']");
 
         // Create PR Items (Services Item)
-        public static By AddServicesItemBtn = By.XPath("(//button[@type='button'])[4]");
+        public static By AddServicesItemBtn = By.XPath("(//div[@class='pr-section-items']//div[@class='mb-2'][2]//button[@type='button'])");
         public static By ServicesItemCode = By.XPath("//input[@id='itemCode']");
         public static By ServicesItemName = By.XPath("//input[@id='itemName']");
         public static By ServicesItemCategoryField = By.XPath("//input[@id='itemCategoryId']");

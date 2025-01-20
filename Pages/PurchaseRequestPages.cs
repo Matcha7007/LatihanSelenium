@@ -91,13 +91,13 @@ namespace LatihanSelenium.Pages
                 foreach (PRItem goodsItem in param.GoodsItems)
 				{
                     //Click Add Button Goods Item
-                    AutomationHelpers.ClickElement(driver, PurchaseRequestLocators.AddGoodsBtn);
+                    AutomationHelpers.ClickElement(driver, PurchaseRequestLocators.AddGoodsItemBtn);
 
                     //Fill in Goods Item Name
                     AutomationHelpers.FillElement(driver, PurchaseRequestLocators.GoodsItemName, goodsItem.Name);
 
                     //Click Add Item
-                    AutomationHelpers.ClickElement(driver, PurchaseRequestLocators.AddGoodsItemBtn);
+                    AutomationHelpers.ClickElement(driver, PurchaseRequestLocators.AddGoodsBtn);
 
                     //Click Close Add Goods Item
                     AutomationHelpers.ClickElement(driver, PurchaseRequestLocators.CloseGoodsBtn);
@@ -117,13 +117,13 @@ namespace LatihanSelenium.Pages
                 foreach (PRItem servicesItem in param.ServicesItems)
                 {
                     //Click Add Button Services Item
-                    AutomationHelpers.ClickElement(driver, PurchaseRequestLocators.AddServicesBtn);
+                    AutomationHelpers.ClickElement(driver, PurchaseRequestLocators.AddServicesItemBtn);
 
                     //Fill in Services Item Name
                     AutomationHelpers.FillElement(driver, PurchaseRequestLocators.ServicesItemName, servicesItem.Name);
 
                     //Click Add Item
-                    AutomationHelpers.ClickElement(driver, PurchaseRequestLocators.AddServicesItemBtn);
+                    AutomationHelpers.ClickElement(driver, PurchaseRequestLocators.AddServicesBtn);
 
                     //Click Close Add Services Item
                     AutomationHelpers.ClickElement(driver, PurchaseRequestLocators.CloseServicesBtn);
