@@ -67,44 +67,106 @@ namespace LatihanSelenium.Pages
 					driver.Navigate().GoToUrl(UrlConstant.CreatePR);
 				}
 
-				//Select PR Type
-				AutomationHelpers.SelectElement(driver, PurchaseRequestLocators.FieldPRList, PurchaseRequestLocators.PRList, param.PRType);
+                //Create PR Header Section
+                //Fill in the PR Subject
+                AutomationHelpers.FillElement(driver, PurchaseRequestLocators.FillSubjectPR, param.PRSubject);
 
-				//buka item section
+                //Select Cost Center 
+                AutomationHelpers.SelectElement(driver, PurchaseRequestLocators.CostCenterPRField, PurchaseRequestLocators.CostCenterPRList, param.CostCenter);
 
-				//Add Goods Items
-				foreach (PRItem goodsItem in param.GoodsItems)
+                //Select PR Type
+                AutomationHelpers.SelectElement(driver, PurchaseRequestLocators.TypePRField, PurchaseRequestLocators.TypePRList, param.PRType);
+
+                //Fill in RequiredDate
+                AutomationHelpers.FillElementNonMandatory(driver, PurchaseRequestLocators.RequiredDatePR, param.RequiredDate);
+
+                //Fill in ProjectCode
+                AutomationHelpers.FillElementNonMandatory(driver, PurchaseRequestLocators.ProjectCodePR, param.ProjectCode);
+
+                //Fill in Remarks
+                AutomationHelpers.FillElementNonMandatory(driver, PurchaseRequestLocators.RemarksPR, param.Remarks);
+
+                //Create PR Items Section
+                //buka item section
+                AutomationHelpers.ClickElement(driver, PurchaseRequestLocators.ItemBtn);
+
+                //Add Goods Items
+                foreach (PRItem goodsItem in param.GoodsItems)
 				{
-					//klik btn add goods item
-					//search item by goodsItem.Name
-					//klik add
-					//klik close
-					//isi qty
+                    //Click Add Button Goods Item
+                    AutomationHelpers.ClickElement(driver, PurchaseRequestLocators.AddGoodsBtn);
 
-					//kondisi jika pr type non catalog
-					if (param.PRType.Equals(PrTypeConstant.NonCatalog))
+                    //Fill in Goods Item Name
+                    AutomationHelpers.FillElement(driver, PurchaseRequestLocators.GoodsItemName, goodsItem.Name);
+
+                    //Click Add Item
+                    AutomationHelpers.ClickElement(driver, PurchaseRequestLocators.AddGoodsItemBtn);
+
+                    //Click Close Add Goods Item
+                    AutomationHelpers.ClickElement(driver, PurchaseRequestLocators.CloseGoodsBtn);
+
+                    //Fill in the Quantity Goods Item
+                    AutomationHelpers.FillElement(driver, PurchaseRequestLocators.QuantityGoods, goodsItem.Qty.ToString());
+
+                    //kondisi jika pr type non catalog
+                    if (param.PRType.Equals(PrTypeConstant.NonCatalog))
 					{
-						//bisa edit price
-					}
+                        //Edit Goods Items Price
+                        AutomationHelpers.FillElement(driver, PurchaseRequestLocators.PriceGoodsItem, goodsItem.Price.ToString());
+                    }
 				}
 
-				//Upload Attachment
-				foreach (string path in param.AttachmentPaths)
-				{
-					AutomationHelpers.ClickElement(driver, PurchaseRequestLocators.AttachmentSection);
-					AutomationHelpers.UploadFile(driver, PurchaseRequestLocators.BtnAdd, path);
-				}
+                //Add Services Items
+                foreach (PRItem servicesItem in param.ServicesItems)
+                {
+                    //Click Add Button Services Item
+                    AutomationHelpers.ClickElement(driver, PurchaseRequestLocators.AddServicesBtn);
 
-				if (!isResubmit)
+                    //Fill in Services Item Name
+                    AutomationHelpers.FillElement(driver, PurchaseRequestLocators.ServicesItemName, servicesItem.Name);
+
+                    //Click Add Item
+                    AutomationHelpers.ClickElement(driver, PurchaseRequestLocators.AddServicesItemBtn);
+
+                    //Click Close Add Services Item
+                    AutomationHelpers.ClickElement(driver, PurchaseRequestLocators.CloseServicesBtn);
+
+                    //Fill in the Quantity Services Item
+                    AutomationHelpers.FillElement(driver, PurchaseRequestLocators.QuantityServices, servicesItem.Qty.ToString());
+
+                    //Condition if the PR Type (Non - Catalog)
+                    if (param.PRType.Equals(PrTypeConstant.NonCatalog))
+                    {
+                        //Edit Goods Items Price
+                        AutomationHelpers.FillElement(driver, PurchaseRequestLocators.PriceServicesItem, servicesItem.Price.ToString());
+                    }
+                }
+
+                //Upload Attachment
+                foreach (string path in param.AttachmentPaths)
+                {
+                    AutomationHelpers.ClickElement(driver, PurchaseRequestLocators.AddAttachmentBtn);
+                    AutomationHelpers.UploadFile(driver, PurchaseRequestLocators.AddFileBtnField, path);
+                }
+
+                if (!isResubmit)
 				{
 					if (isSubmit)
 					{
-						//klik button submit
-					}
+                        //Click Submit Button
+                        AutomationHelpers.ClickElement(driver, PurchaseRequestLocators.SubmitBtn);
+
+                        //Click Submit Confirmation Button
+                        AutomationHelpers.ClickElement(driver, PurchaseRequestLocators.YesBtn);
+                    }
 					else
 					{
-						//klik button save as draft
-					}
+                        //Click Save as Draft Button
+                        AutomationHelpers.ClickElement(driver, PurchaseRequestLocators.SaveDraftBtn);
+
+                        //Click Save as Draft Confirmation Button
+                        AutomationHelpers.ClickElement(driver, PurchaseRequestLocators.YesBtn);
+                    }
 
 					string msg = AutomationHelpers.GetAlertMessage(driver, GlobalLocators.AlertSuccess);
 					if (AutomationHelpers.ValidateAlert(msg, GlobalConfig.Config.SuccessMessages))
