@@ -1,7 +1,5 @@
 ﻿using InputSimulatorEx;
 using InputSimulatorEx.Native;
-
-using LatihanSelenium.Constants;
 using LatihanSelenium.Locators;
 using LatihanSelenium.Models;
 using OpenQA.Selenium;
@@ -66,6 +64,22 @@ namespace LatihanSelenium.Utilities
 			{
 				throw new Exception(ex.ToString());
 			}
+		}
+
+		public static void FillDate(IWebDriver driver, By locator, string param, int sec = -1)
+		{
+			//*NOTE : Untuk date format di excel harus ditulis dengan awalan ', jadi '21 Jan 2025
+			sec = sec == -1 ? GlobalConfig.Config.WaitElementInSecond : sec;
+			ClickElement(driver, locator, sec);
+			FillElement(driver, locator, param, sec);
+			driver.FindElement(locator).SendKeys(Keys.Enter);
+		}
+
+		public static void FillDateNonMandatory(IWebDriver driver, By locator, string param, int sec = -1)
+		{
+			//*NOTE : Untuk date format di excel harus ditulis dengan awalan ', jadi '21 Jan 2025
+			sec = sec == -1 ? GlobalConfig.Config.WaitElementInSecond : sec;
+			if (!string.IsNullOrEmpty(param)) FillDate(driver, locator, param, sec);
 		}
 
 		public static void FillElementNonMandatory(IWebDriver driver, By locator, string param, int sec = -1)

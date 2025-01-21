@@ -74,8 +74,9 @@ namespace LatihanSelenium.Pages
                 //Select PR Type
                 AutomationHelpers.SelectElement(driver, PurchaseRequestLocators.TypePRField, PurchaseRequestLocators.TypePRList, param.PRType);
 
-                //Fill in RequiredDate
-                AutomationHelpers.FillElementNonMandatory(driver, PurchaseRequestLocators.RequiredDatePR, param.RequiredDate);
+                //Fill in RequiredDate 
+				// *NOTE : Untuk date format di excel harus ditulis dengan awalan ', jadi '21 Jan 2025
+                AutomationHelpers.FillDateNonMandatory(driver, PurchaseRequestLocators.RequiredDatePR, param.RequiredDate);
 
                 //Fill in ProjectCode
                 AutomationHelpers.FillElementNonMandatory(driver, PurchaseRequestLocators.ProjectCodePR, param.ProjectCode);
