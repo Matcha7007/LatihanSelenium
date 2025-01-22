@@ -69,6 +69,7 @@ namespace LatihanSelenium.Utilities
 								PurchaseRequestPages.HandleTestCase(driver, cfg, plan, param);
 								break;
 							case ModuleNameConstant.RFQ:
+								RequestForQuotationPages.HandleTestCase(driver, cfg, plan, param);
 								break;
 							case ModuleNameConstant.VQ:
 								break;

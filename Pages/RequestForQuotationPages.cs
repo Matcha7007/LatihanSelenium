@@ -8,32 +8,32 @@ namespace LatihanSelenium.Pages
 {
 	public static class RequestForQuotationPages
 	{
-		public static void HandleTestCase(IWebDriver driver, AppConfig cfg, TestplanModels plan, ResourceModels param)
-		{
-			try
-			{
-				switch (plan.TestCase)
-				{
-					case TestCaseConstant.Submit:
-						RequestForQuotationModels dataSubmit = param.RequestForQuotations.Where(x => x.TestCaseId.Equals(plan.TestCaseId) && x.DataFor.Equals(DataForConstant.Submit)).FirstOrDefault()!;
-						plan.TestData = PlanHelper.CreateAddress(SheetConstant.RFQ, dataSubmit.Row);
-						HandleForm(driver, cfg, plan, dataSubmit, true);
-						break;
-					case TestCaseConstant.SaveAsDraft:
+        public static void HandleTestCase(IWebDriver driver, AppConfig cfg, TestplanModels plan, ResourceModels param)
+        {
+            try
+            {
+                switch (plan.TestCase)
+                {
+                    case TestCaseConstant.Submit:
+                        RequestForQuotationModels dataSubmit = param.RequestForQuotations.Where(x => x.TestCaseId.Equals(plan.TestCaseId) && x.DataFor.Equals(DataForConstant.Submit)).FirstOrDefault()!;
+                        plan.TestData = PlanHelper.CreateAddress(SheetConstant.RFQ, dataSubmit.Row);
+                        HandleForm(driver, cfg, plan, dataSubmit, true);
+                        break;
+                    case TestCaseConstant.SaveAsDraft:
                         RequestForQuotationModels dataDraft = param.RequestForQuotations.Where(x => x.TestCaseId.Equals(plan.TestCaseId) && x.DataFor.Equals(DataForConstant.SaveAsDraft)).FirstOrDefault()!;
-						plan.TestData = PlanHelper.CreateAddress(SheetConstant.RFQ, dataDraft.Row);
-						HandleForm(driver, cfg, plan, dataDraft);
-						break;
-					default: break;
-				}
-			}
-			finally
-			{
-				driver.Dispose();
-			}
-		}
+                        plan.TestData = PlanHelper.CreateAddress(SheetConstant.RFQ, dataDraft.Row);
+                        HandleForm(driver, cfg, plan, dataDraft);
+                        break;
+                    default: break;
+                }
+            }
+            finally
+            {
+                driver.Dispose();
+            }
+        }
 
-		public static void SearchListRFQ(IWebDriver driver)
+        public static void SearchListRFQ(IWebDriver driver)
 		{
 			try
 			{
@@ -61,7 +61,7 @@ namespace LatihanSelenium.Pages
 			{
 				if (!isResubmit)
 				{
-					AutomationHelpers.NavigateTo(driver, UrlConstant.CreatePR);
+					AutomationHelpers.NavigateTo(driver, UrlConstant.CreateRFQ);
 				}
 
                 //Create RFQ Header Section
@@ -72,13 +72,13 @@ namespace LatihanSelenium.Pages
                 AutomationHelpers.SelectElement(driver, RequestForQuotationLocators.FieldRFQList, RequestForQuotationLocators.RFQList, param.RFQType);
 
                 //Fill in Tender Briefing Date
-                AutomationHelpers.FillElementNonMandatory(driver, RequestForQuotationLocators.TenderBriefingDate, param.TenderBriefingDate);
+                AutomationHelpers.FillDate(driver, RequestForQuotationLocators.TenderBriefingDate, param.TenderBriefingDate);
 
                 //Fill in Quotation Submission Date
-                AutomationHelpers.FillElementNonMandatory(driver, RequestForQuotationLocators.QuotationDueDate, param.QuotationSubmissionDate);
+                AutomationHelpers.FillDate(driver, RequestForQuotationLocators.QuotationDueDate, param.QuotationSubmissionDate);
 
                 //Fill in Target Appointment Date
-                AutomationHelpers.FillElementNonMandatory(driver, RequestForQuotationLocators.TargetAppointmentDate, param.TargetAppointmentDate);
+                AutomationHelpers.FillDate(driver, RequestForQuotationLocators.TargetAppointmentDate, param.TargetAppointmentDate);
 
                 //Fill in Remarks
                 AutomationHelpers.FillElementNonMandatory(driver, RequestForQuotationLocators.Remarks, param.Remarks);
@@ -123,6 +123,28 @@ namespace LatihanSelenium.Pages
 
                     //Fill in the Quantity Services Item
                     AutomationHelpers.FillElement(driver, RequestForQuotationLocators.ServicesItemRemarks, servicesItem.Remark);
+
+                }
+
+                //Create RFQ Vendor Section
+                //buka Vendor section
+                AutomationHelpers.ClickElement(driver, RequestForQuotationLocators.VendorDropDown);
+
+                //Add Services Items
+                foreach (RFQVendor Vendor in param.Vendors)
+                {
+
+                    //Click Add Button Vendor
+                    AutomationHelpers.ClickElement(driver, RequestForQuotationLocators.VendorBtn);
+
+                    //Fill in Vendor Name
+                    AutomationHelpers.FillElement(driver, RequestForQuotationLocators.VendorName, Vendor.Name);
+
+                    //Click Add Item
+                    AutomationHelpers.ClickElement(driver, RequestForQuotationLocators.AddVendor);
+
+                    //Click Close 
+                    AutomationHelpers.ClickElement(driver, RequestForQuotationLocators.CloseVendor);
 
                 }
 

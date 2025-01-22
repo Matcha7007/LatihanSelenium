@@ -19,7 +19,7 @@ namespace LatihanSelenium.Locators
         public static By ItemDropDown = By.XPath("//div[@class='ant-collapse-item rfq-form-collapse-panel-items']");
 
         //Goods Item
-        public static By GoodsItemBtn = By.XPath("//div[@class='ant-space css-j3ybdg ant-space-horizontal ant-space-align-center mb-1']//button[@type='button']");
+        public static By GoodsItemBtn = By.XPath("//div[@class='rfq-section-items']//div[@class='mb-2'][1]//button[@type='button']");
         public static By Goods_PRNumber = By.XPath("//input[@id='prNo']");
         public static By Goods_PRDateFrom = By.XPath("//input[@placeholder='PR Date From']");
         public static By Goods_PRDateTo = By.XPath("//input[@placeholder='PR Date To']");
@@ -27,12 +27,12 @@ namespace LatihanSelenium.Locators
         public static By Goods_ItemName = By.XPath("//input[@id='itemName']");
         public static By FieldGoods_ItemCategory = By.XPath("//input[@id='itemCategoryId']");
         public static By Goods_ItemCategoryList = By.XPath("//div[@class='ant-select-item-option-content']");
-        public static By AddGoodsItemBtn = By.XPath("//tbody[@class='ant-table-tbody']//button[@type='button']");
+        public static By AddGoodsItemBtn = By.XPath("//div[@class='ant-modal-content']//td[@class='ant-table-cell']//button[@type='button']");
         public static By CloseGoodsItem = By.XPath("//div[@class='ant-modal-content']//button[@type='button']");
         public static By GoodsItemRemarks = By.XPath("//textarea[@id='form-rfq_goods_remarks_0']");
 
         //Services Item
-        public static By ServicesItemBtn = By.XPath("//div[@class='ant-space css-j3ybdg ant-space-horizontal ant-space-align-center mb-1']//button[@type='button']");
+        public static By ServicesItemBtn = By.XPath("//div[@class='rfq-section-items']//div[@class='mb-2'][2]//button[@type='button']");
         public static By Services_PRNumber = By.XPath("//input[@id='prNo']");
         public static By Services_PRDateFrom = By.XPath("//input[@placeholder='PR Date From']");
         public static By Services_PRDateTo = By.XPath("//input[@placeholder='PR Date To']");
@@ -40,7 +40,7 @@ namespace LatihanSelenium.Locators
         public static By Services_ItemName = By.XPath("//input[@id='itemName']");
         public static By FieldServices_ItemCategory = By.XPath("//input[@id='itemCategoryId']");
         public static By Services_ItemCategoryList = By.XPath("//div[@class='ant-select-item-option-content']");
-        public static By AddServicesItemBtn = By.XPath("//tbody[@class='ant-table-tbody']//td[@class='ant-table-cell']//button[@type='button']");
+        public static By AddServicesItemBtn = By.XPath("//div[@class='ant-modal-content']//td[@class='ant-table-cell']//button[@type='button']");
         public static By CloseServicesItem = By.XPath("//div[@class='ant-modal-content']//button[@type='button']");
         public static By ServicesItemRemarks = By.XPath("//textarea[@id='form-rfq_service_remarks_0']");
 
@@ -55,7 +55,8 @@ namespace LatihanSelenium.Locators
         public static By PKPStatusList = By.XPath("//div[@class='ant-select-item-option-content']");
         public static By FieldVendorSize = By.XPath("//input[@id='vendorSize']");
         public static By VendorSizeList = By.XPath("//div[@class='ant-select-item-option-content']");
-        public static By AddVendor = By.XPath("//tbody[@class='ant-table-tbody']//td[@class='ant-table-cell']//button[@type='button']");
+        public static By AddVendor = By.XPath("//div[@class='ant-modal-content']//td[@class='ant-table-cell']//button[@type='button']");
+        public static By CloseVendor = By.XPath("//div[@class='ant-modal-content']//button[@type='button']");
 
         public static By AttachmentSection = By.XPath("//div[@class='ant-collapse-item rfq-form-collapse-panel-notes-and-attachments']");
         public static By BtnAddInternal = By.XPath("//div[@class='section-internal']//div[@class='wrap-input-upload-file']");

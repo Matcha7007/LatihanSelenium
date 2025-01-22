@@ -37,6 +37,7 @@ namespace LatihanSelenium.Utilities
 
 						result.Tasks = ReadTask(wb, newTestPlans);
 						result.PurchaseRequests = ReadPR(wb, newTestPlans);
+						result.RequestForQuotations = ReadRFQ(wb, newTestPlans);
 
 						wb.Close();
 						fs.Close();
@@ -232,7 +233,8 @@ namespace LatihanSelenium.Utilities
                 int colIndexGoodsItemRemarks = colIndexGoodsItemName + 1;
                 int colIndexServicesItemName = colIndexGoodsItemRemarks + 1;
                 int colIndexServicesItemRemarks = colIndexServicesItemName + 1;
-                int colIndexInternalAttachmentPath = colIndexServicesItemRemarks + 1;
+                int colIndexVendor = colIndexServicesItemRemarks + 1;
+                int colIndexInternalAttachmentPath = colIndexVendor + 1;
                 int colIndexVendorAttachmentPath = colIndexInternalAttachmentPath + 1;
 
                 IRow firstRow = sheet.GetRow(0);
@@ -249,6 +251,7 @@ namespace LatihanSelenium.Utilities
                 ICell cellHeaderGoodsItemRemarks = firstRow.GetCell(colIndexGoodsItemRemarks);
                 ICell cellHeaderServicesItemName = firstRow.GetCell(colIndexServicesItemName);
                 ICell cellHeaderServicesItemRemarks = firstRow.GetCell(colIndexServicesItemRemarks);
+                ICell cellHeaderVendor = firstRow.GetCell(colIndexVendor);
                 ICell cellHeaderInternalAttachmentPath = firstRow.GetCell(colIndexInternalAttachmentPath);
                 ICell cellHeaderVendorAttachmentPath = firstRow.GetCell(colIndexVendorAttachmentPath);
 
@@ -264,6 +267,7 @@ namespace LatihanSelenium.Utilities
                 ValidateCellHeaderName(cellHeaderGoodsItemRemarks, workSheetName, colIndexGoodsItemRemarks + 1, "Goods Item Remarks");
                 ValidateCellHeaderName(cellHeaderServicesItemName, workSheetName, colIndexServicesItemName + 1, "Services Item Name");
                 ValidateCellHeaderName(cellHeaderServicesItemRemarks, workSheetName, colIndexServicesItemRemarks + 1, "Services Item Remarks");
+                ValidateCellHeaderName(cellHeaderVendor, workSheetName, colIndexVendor + 1, "Vendor");
                 ValidateCellHeaderName(cellHeaderInternalAttachmentPath, workSheetName, colIndexInternalAttachmentPath + 1, "Internal Attachment Path");
                 ValidateCellHeaderName(cellHeaderVendorAttachmentPath, workSheetName, colIndexVendorAttachmentPath + 1, "Vendor Attachment Path");
                 #endregion
@@ -315,6 +319,16 @@ namespace LatihanSelenium.Utilities
                                 };
                             }
 
+                            string VendorName = TryGetString(currentRow.GetCell(colIndexVendor), workSheetName, cellHeaderVendor.StringCellValue, rowNum);
+                            RFQVendor Vendor = new();
+                            if (!string.IsNullOrEmpty(VendorName))
+                            {
+                                Vendor = new()
+                                {
+                                    Name = VendorName
+                                };
+                            }
+
                             string InternalAttachmentPath = TryGetString(currentRow.GetCell(colIndexInternalAttachmentPath), workSheetName, cellHeaderInternalAttachmentPath.StringCellValue, rowNum);
                             string VendorAttachmentPath = TryGetString(currentRow.GetCell(colIndexVendorAttachmentPath), workSheetName, cellHeaderVendorAttachmentPath.StringCellValue, rowNum);
 
@@ -322,7 +336,9 @@ namespace LatihanSelenium.Utilities
                             {
                                 if (!string.IsNullOrEmpty(goodsItem.Name)) value.GoodsItems.Add(goodsItem);
                                 if (!string.IsNullOrEmpty(servicesItem.Name)) value.ServicesItems.Add(servicesItem);
+                                if (!string.IsNullOrEmpty(Vendor.Name)) value.Vendors.Add(Vendor);
                                 if (!string.IsNullOrEmpty(InternalAttachmentPath)) value.InternalAttachmentPaths.Add(InternalAttachmentPath);
+                                if (!string.IsNullOrEmpty(VendorAttachmentPath)) value.VendorAttachmentPaths.Add(VendorAttachmentPath);
                             }
                             else
                             {
@@ -338,6 +354,7 @@ namespace LatihanSelenium.Utilities
                                 param.Remarks = TryGetString(currentRow.GetCell(colIndexRemarks), workSheetName, cellHeaderRemarks.StringCellValue, rowNum);
                                 if (!string.IsNullOrEmpty(goodsItem.Name)) param.GoodsItems.Add(goodsItem);
                                 if (!string.IsNullOrEmpty(servicesItem.Name)) param.ServicesItems.Add(servicesItem);
+                                if (!string.IsNullOrEmpty(Vendor.Name)) param.Vendors.Add(Vendor);
                                 if (!string.IsNullOrEmpty(InternalAttachmentPath)) param.InternalAttachmentPaths.Add(InternalAttachmentPath);
                                 if (!string.IsNullOrEmpty(VendorAttachmentPath)) param.VendorAttachmentPaths.Add(VendorAttachmentPath);
                                 _RFQ.Add($"{idStr}{dataFor}{seqStr}", param);
