@@ -70,6 +70,7 @@ namespace LatihanSelenium.Constants
 		public const string Task = "Task";
 		public const string PR = "PurchaseRequest";
 		public const string RFQ = "RequestForQuotation";
+		public const string VQ = "VendorQuotation";
 	}
 
 	public class PrTypeConstant
@@ -101,6 +102,8 @@ namespace LatihanSelenium.Constants
         public static string ListRFQ = $"{BaseUrl}/rfq/{List}";
         public static string PendingTaskRFQ = $"{BaseUrl}/rfq/{PendingTask}";
 
+		public static string CreateVQ = $"{BaseUrl}/vendor-quotation/{Create}";
+		public static string ListVQ = $"{BaseUrl}/vendor-quotation/{List}";
         #endregion
     }
 }

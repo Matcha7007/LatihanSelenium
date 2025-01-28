@@ -49,12 +49,11 @@ namespace LatihanSelenium.Locators
         // Add Attachments
         public static By AddAttachmentBtn = By.XPath("(//div[@class='ant-collapse-header'])[3]");
         public static By AddFileBtnField = By.XPath("//div[@class='purchase-request-section-attachments']//div[@class='wrap-input-upload-file']");
-        public static By FileAttachment = By.XPath("//input[@type='file']");
 
         // Submit & Save as Draft Button
         public static By SubmitBtn = By.XPath("//button[@type='submit']");
         public static By YesBtn = By.XPath("(//div[@id='swal2-html-container']//button[@type='button'])[2]");
-        public static By SaveDraftBtn = By.XPath("");
+        public static By SaveDraftBtn = By.XPath("(//button[@type='button'])[4]");
 
         //public static By AttachmentSection = By.XPath("//form//div[@class='ant-collapse-item']");
         //public static By BtnAdd = By.XPath("//div[@class='purchase-request-section-attachments']//div[@class='wrap-input-upload-file']");

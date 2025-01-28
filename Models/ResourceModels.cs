@@ -7,5 +7,6 @@
 		public virtual List<TaskModels> Tasks { get; set; } = [];
 		public virtual List<PurchaseRequestModels> PurchaseRequests { get; set; } = [];
         public virtual List<RequestForQuotationModels> RequestForQuotations { get; set; } = [];
+		public virtual List<VendorQuotationModels> VendorQuotations { get; set;} = [];
     }
 }
