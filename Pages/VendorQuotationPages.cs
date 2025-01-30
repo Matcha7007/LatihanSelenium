@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LatihanSelenium.Constants;
+﻿using LatihanSelenium.Constants;
 using LatihanSelenium.Locators;
 using LatihanSelenium.Models;
 using LatihanSelenium.Utilities;
@@ -90,16 +85,20 @@ namespace LatihanSelenium.Pages
                 // Open Items Section
                 AutomationHelpers.ClickElement(driver, VendorQuotationLocators.ItemBtn);
 
+                //Errornya ada di sini, jadi kalo table rownya itu dynamic xpathnya mesti direplace sesuai index tiap rownya
+                // liat note di xpathnya
+                int i = 0;
                 foreach (VQItem goodsItem in param.GoodsItem)
                 {
                     // Fill in Remarks Vendor
-                    AutomationHelpers.FillElementNonMandatory(driver, VendorQuotationLocators.RemarksVendorGoodsItem, goodsItem.RemarksVendor);
+                    AutomationHelpers.FillElementNonMandatory(driver, VendorQuotationLocators.RemarksVendorGoodsItem(i), goodsItem.RemarksVendor);
 
                     // Fill in Price
                     AutomationHelpers.FillElement(driver, VendorQuotationLocators.PriceVendorGoodsItem, goodsItem.Price.ToString());
 
                     // Fill in Discount
-                    AutomationHelpers.FillElement(driver, VendorQuotationLocators.DiscountVendorGoodsItem, goodsItem.Discount.ToString());
+                    AutomationHelpers.FillElement(driver, VendorQuotationLocators.DiscountVendorGoodsItem(i), goodsItem.Discount.ToString());
+                    i++;
                 }
 
                 foreach (VQItem servicesItem in param.ServicesItem)

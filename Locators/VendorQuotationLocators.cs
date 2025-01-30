@@ -22,9 +22,13 @@ namespace LatihanSelenium.Locators
         //input[@id='form-vendor-quotation_goods_price_0
         // Items Section (Goods Item)
         public static By ItemBtn = By.XPath("//div[@class='ant-collapse-item vendor-quotation-form-collapse-panel-items']");
-        public static By RemarksVendorGoodsItem = By.XPath("//textarea[@id='form-vendor-quotation_goods_remarks_from_vendor_0']");
-        public static By PriceVendorGoodsItem = By.XPath("//div[@class='ant-input-number-input-wrap']//input']");
-        public static By DiscountVendorGoodsItem = By.XPath("//input[@id='form-vendor-quotation_goods_discount_0']");
+        // 0 ini yang mesti direplace di row 1 dia berubah jadi 1
+        public static By RemarksVendorGoodsItem(int i = 0) => By.XPath($"//textarea[@id='form-vendor-quotation_goods_remarks_from_vendor_{i}']");
+		// ini kalo xpathnya //div[@class='ant-input-number-input-wrap']//input'] pertama salah
+        // terus row 0 aja, row 1 nanti gabisa jadi harus diganti yang bisa dynamic
+		public static By PriceVendorGoodsItem = By.XPath("//div[@class='ant-input-number-input-wrap']//input");
+		// 0 ini juga sama yang mesti direplace di row 1 dia berubah jadi 1
+		public static By DiscountVendorGoodsItem(int i = 0) => By.XPath($"//input[@id='form-vendor-quotation_goods_discount_{i}']");
         public static By VendorGoodsItemVATRate = By.XPath("//input[@id='form-vendor-quotation_goodsTax']");
 
         // Items Section (Services Item)
