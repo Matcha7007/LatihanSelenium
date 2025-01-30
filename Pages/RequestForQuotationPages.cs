@@ -130,28 +130,19 @@ namespace LatihanSelenium.Pages
                 //buka Vendor section
                 AutomationHelpers.ClickElement(driver, RequestForQuotationLocators.VendorDropDown);
 
-                //Add Services Items
-                foreach (RFQVendor Vendor in param.Vendors)
-                {
+                AutomationHelpers.ClickElement(driver, RequestForQuotationLocators.VendorBtn);
 
-                    //Click Add Button Vendor
-                    AutomationHelpers.ClickElement(driver, RequestForQuotationLocators.VendorBtn);
+                AutomationHelpers.FillElement(driver, RequestForQuotationLocators.VendorName, param.Vendor);
 
-                    //Fill in Vendor Name
-                    AutomationHelpers.FillElement(driver, RequestForQuotationLocators.VendorName, Vendor.Name);
+                AutomationHelpers.ClickElement(driver, RequestForQuotationLocators.AddVendor);
 
-                    //Click Add Item
-                    AutomationHelpers.ClickElement(driver, RequestForQuotationLocators.AddVendor);
+                AutomationHelpers.ClickElement(driver, RequestForQuotationLocators.CloseVendor);
 
-                    //Click Close 
-                    AutomationHelpers.ClickElement(driver, RequestForQuotationLocators.CloseVendor);
-
-                }
+                AutomationHelpers.ClickElement(driver, RequestForQuotationLocators.AttachmentSection);
 
                 //Upload Internal Attachment
                 foreach (string path in param.InternalAttachmentPaths)
                 {
-                    AutomationHelpers.ClickElement(driver, RequestForQuotationLocators.AttachmentSection);
                     AutomationHelpers.UploadFile(driver, RequestForQuotationLocators.BtnAddInternal, path);
                 }
 

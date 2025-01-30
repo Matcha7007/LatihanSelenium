@@ -2,6 +2,8 @@
 using LatihanSelenium.Models;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using SharpDX;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
@@ -19,6 +21,7 @@ namespace LatihanSelenium.Utilities
 	{
 		private static Dictionary<string, PurchaseRequestModels> _PR = [];
         private static Dictionary<string, RequestForQuotationModels> _RFQ = [];
+		private static Dictionary<string, InvoiceModels> _Invoice = [];
 
         public static ResourceModels ReadExcel(AppConfig cfg)
 		{
@@ -38,6 +41,7 @@ namespace LatihanSelenium.Utilities
 						result.Tasks = ReadTask(wb, newTestPlans);
 						result.PurchaseRequests = ReadPR(wb, newTestPlans);
 						result.RequestForQuotations = ReadRFQ(wb, newTestPlans);
+						result.Invoices = ReadInvoice(wb, newTestPlans);
 
 						wb.Close();
 						fs.Close();
@@ -325,7 +329,7 @@ namespace LatihanSelenium.Utilities
                             {
                                 Vendor = new()
                                 {
-                                    Name = VendorName
+                                    Name = VendorName,
                                 };
                             }
 
@@ -371,6 +375,168 @@ namespace LatihanSelenium.Utilities
                 throw new Exception($"Read Sheet {SheetConstant.RFQ} is Fail : {CheckErrorReadExcel(ex.Message)}");
             }
         }
+
+        private static List<InvoiceModels> ReadInvoice(IWorkbook wb, List<TestplanModels> plans)
+        {
+            List<InvoiceModels> result = [];
+            plans = plans.Where(x => x.ModuleName == ModuleNameConstant.Invoice).ToList();
+            try
+            {
+                string workSheetName = SheetConstant.Invoice;
+                ISheet sheet = wb.GetSheet(workSheetName);
+
+                #region Validate Column
+                int colIndexId = 0;
+                int colIndexDataFor = colIndexId + 1;
+                int colIndexSeq = colIndexDataFor + 1;
+                int colIndexPONumber = colIndexSeq + 1;
+                int colIndexVendorInvoiceNumber = colIndexPONumber + 1;
+                int colIndexInvoiceReceivedDate = colIndexVendorInvoiceNumber + 1;
+                int colIndexInvoiceOriginalDate = colIndexInvoiceReceivedDate + 1;
+                int colIndexInvoiceDueDate = colIndexInvoiceOriginalDate + 1;
+                int colIndexPaymentType = colIndexInvoiceDueDate + 1;
+                int colIndexBankAccount = colIndexPaymentType + 1;
+                int colIndexBankVendor = colIndexBankAccount + 1;
+                int colIndexRemarks = colIndexBankVendor + 1;
+                int colIndexGoodsVATRate = colIndexRemarks + 1;
+                int colIndexServicesVATRate = colIndexGoodsVATRate + 1;
+                int colIndexServicesWHTRate = colIndexServicesVATRate + 1;
+                int colIndexServicesWHTAmount = colIndexServicesWHTRate + 1;
+                int colIndexAdjustment = colIndexServicesWHTAmount + 1;
+                int colIndexAdjustmentValue = colIndexAdjustment + 1;
+                int colIndexAttachmentPath = colIndexAdjustmentValue + 1;
+
+                IRow firstRow = sheet.GetRow(0);
+                ICell cellHeaderId = firstRow.GetCell(colIndexId);
+                ICell cellHeaderDataFor = firstRow.GetCell(colIndexDataFor);
+                ICell cellHeaderSeq = firstRow.GetCell(colIndexSeq);
+                ICell cellHeaderPONumber = firstRow.GetCell(colIndexPONumber);
+                ICell cellHeaderVendorInvoiceNumber = firstRow.GetCell(colIndexVendorInvoiceNumber);
+                ICell cellHeaderInvoiceReceivedDate = firstRow.GetCell(colIndexInvoiceReceivedDate);
+                ICell cellHeaderInvoiceOriginalDate = firstRow.GetCell(colIndexInvoiceOriginalDate);
+                ICell cellHeaderInvoiceDueDate = firstRow.GetCell(colIndexInvoiceDueDate);
+                ICell cellHeaderPaymentType = firstRow.GetCell(colIndexPaymentType);
+                ICell cellHeaderBankAccount = firstRow.GetCell(colIndexBankAccount);
+                ICell cellHeaderBankVendor = firstRow.GetCell(colIndexBankVendor);
+                ICell cellHeaderRemarks = firstRow.GetCell(colIndexRemarks);
+                ICell cellHeaderGoodsVATRate = firstRow.GetCell(colIndexGoodsVATRate);
+                ICell cellHeaderServicesVATRate = firstRow.GetCell(colIndexServicesVATRate);
+                ICell cellHeaderServicesWHTRate = firstRow.GetCell(colIndexServicesWHTRate);
+                ICell cellHeaderServicesWHTAmount = firstRow.GetCell(colIndexServicesWHTAmount);
+                ICell cellHeaderAdjustment = firstRow.GetCell(colIndexAdjustment);
+                ICell cellHeaderAdjustmentAmount = firstRow.GetCell(colIndexAdjustmentValue);
+                ICell cellHeaderAttachmentPath = firstRow.GetCell(colIndexAttachmentPath);
+
+                ValidateCellHeaderName(cellHeaderId, workSheetName, colIndexId + 1, "Test Case Id");
+                ValidateCellHeaderName(cellHeaderDataFor, workSheetName, colIndexDataFor + 1, "Data For");
+                ValidateCellHeaderName(cellHeaderPONumber, workSheetName, colIndexPONumber + 1, "PO Number");
+                ValidateCellHeaderName(cellHeaderVendorInvoiceNumber, workSheetName, colIndexVendorInvoiceNumber + 1, "Vendor Invoice Number");
+                ValidateCellHeaderName(cellHeaderInvoiceReceivedDate, workSheetName, colIndexInvoiceReceivedDate + 1, "Invoice Received Date");
+                ValidateCellHeaderName(cellHeaderInvoiceOriginalDate, workSheetName, colIndexInvoiceOriginalDate + 1, "Invoice Original Date");
+                ValidateCellHeaderName(cellHeaderInvoiceDueDate, workSheetName, colIndexInvoiceDueDate + 1, "Invoice Due Date");
+                ValidateCellHeaderName(cellHeaderPaymentType, workSheetName, colIndexPaymentType + 1, "Payment Type");
+                ValidateCellHeaderName(cellHeaderBankAccount, workSheetName, colIndexBankAccount + 1, "Bank Account");
+                ValidateCellHeaderName(cellHeaderBankVendor, workSheetName, colIndexBankVendor + 1, "Bank Vendor");
+                ValidateCellHeaderName(cellHeaderRemarks, workSheetName, colIndexRemarks + 1, "Remarks");
+                ValidateCellHeaderName(cellHeaderGoodsVATRate, workSheetName, colIndexGoodsVATRate + 1, "Goods VAT Rate");
+                ValidateCellHeaderName(cellHeaderServicesVATRate, workSheetName, colIndexServicesVATRate + 1, "Services VAT Rate");
+                ValidateCellHeaderName(cellHeaderServicesWHTRate, workSheetName, colIndexServicesWHTRate + 1, "Services WHT Rate");
+                ValidateCellHeaderName(cellHeaderServicesWHTAmount, workSheetName, colIndexServicesWHTAmount + 1, "Services WHT Amount");
+                ValidateCellHeaderName(cellHeaderAdjustment, workSheetName, colIndexAdjustment + 1, "Adjustment");
+                ValidateCellHeaderName(cellHeaderAdjustmentAmount, workSheetName, colIndexAdjustmentValue + 1, "Adjustment Value");
+                ValidateCellHeaderName(cellHeaderAttachmentPath, workSheetName, colIndexAttachmentPath + 1, "Attachment Path");
+                #endregion
+
+                int rowNum = 0;
+
+                while (true)
+                {
+                    rowNum++;
+                    IRow? currentRow = sheet.GetRow(rowNum);
+                    if (currentRow == null)
+                    {
+                        break;
+                    }
+                    if (IsRowEmpty(currentRow, colIndexAttachmentPath))
+                    {
+                        break;
+                    }
+
+                    #region Assign Param
+                    string idStr = TryGetString(currentRow.GetCell(colIndexId), workSheetName, cellHeaderId.StringCellValue, rowNum);
+                    string seqStr = TryGetString(currentRow.GetCell(colIndexSeq), workSheetName, cellHeaderSeq.StringCellValue, rowNum);
+                    string dataFor = TryGetString(currentRow.GetCell(colIndexDataFor), workSheetName, cellHeaderDataFor.StringCellValue, rowNum);
+                    if (!string.IsNullOrEmpty(idStr))
+                    {
+                        InvoiceModels param = new();
+                        int id = int.Parse(idStr);
+                        if (plans.Any(x => x.TestCaseId.Equals(id)))
+                        {
+                            string goodsVATRate = TryGetString(currentRow.GetCell(colIndexGoodsVATRate), workSheetName, cellHeaderGoodsVATRate.StringCellValue, rowNum);
+                            InvoiceGoodsItem goodsItem = new();
+                            if (!string.IsNullOrEmpty(goodsVATRate))
+                            {
+                                goodsItem = new()
+                                {
+                                    VATRate = IntegerParse(goodsVATRate)
+                                };
+                            }
+
+                            string ServicesVATRate = TryGetString(currentRow.GetCell(colIndexServicesVATRate), workSheetName, cellHeaderServicesVATRate.StringCellValue, rowNum);
+                            InvoiceServicesItem servicesItem = new();
+                            if (!string.IsNullOrEmpty(ServicesVATRate))
+                            {
+                                servicesItem = new()
+                                {
+                                    VATRate = IntegerParse(ServicesVATRate),
+                                    WHTRate = IntegerParse(TryGetString(currentRow.GetCell(colIndexServicesWHTRate), workSheetName, cellHeaderServicesWHTRate.StringCellValue, rowNum)),
+                                    WHTAmount = IntegerParse(TryGetString(currentRow.GetCell(colIndexServicesWHTAmount), workSheetName, cellHeaderServicesWHTAmount.StringCellValue, rowNum))
+                                };
+                            }
+
+                            string AttachmentPath = TryGetString(currentRow.GetCell(colIndexAttachmentPath), workSheetName, cellHeaderAttachmentPath.StringCellValue, rowNum);
+
+                            if (_Invoice.TryGetValue($"{idStr}{dataFor}{seqStr}", out InvoiceModels? value))
+                            {
+                                if (!string.IsNullOrEmpty(goodsItem.VATRate.ToString())) value.GoodsItems.Add(goodsItem);
+                                if (!string.IsNullOrEmpty(servicesItem.VATRate.ToString()) || !string.IsNullOrEmpty(servicesItem.WHTRate.ToString()) || !string.IsNullOrEmpty(servicesItem.WHTAmount.ToString())) value.ServicesItems.Add(servicesItem);
+                                if (!string.IsNullOrEmpty(AttachmentPath)) value.AttachmentPaths.Add(AttachmentPath);
+                            }
+                            else
+                            {
+                                param.Row = rowNum;
+                                param.TestCaseId = id;
+                                param.DataFor = dataFor;
+                                param.Sequence = !string.IsNullOrEmpty(seqStr) ? int.Parse(seqStr) : 1;
+                                param.PONumber = TryGetString(currentRow.GetCell(colIndexPONumber), workSheetName, cellHeaderPONumber.StringCellValue, rowNum);
+                                param.VendorInvoiceNumber = TryGetString(currentRow.GetCell(colIndexVendorInvoiceNumber), workSheetName, cellHeaderVendorInvoiceNumber.StringCellValue, rowNum);
+                                param.InvoiceReceivedDate = TryGetString(currentRow.GetCell(colIndexInvoiceReceivedDate), workSheetName, cellHeaderInvoiceReceivedDate.StringCellValue, rowNum);
+                                param.InvoiceOriginalDate = TryGetString(currentRow.GetCell(colIndexInvoiceOriginalDate), workSheetName, cellHeaderInvoiceOriginalDate.StringCellValue, rowNum);
+                                param.InvoiceDueDate = TryGetString(currentRow.GetCell(colIndexInvoiceDueDate), workSheetName, cellHeaderInvoiceDueDate.StringCellValue, rowNum);
+                                param.PaymentType = TryGetString(currentRow.GetCell(colIndexPaymentType), workSheetName, cellHeaderPaymentType.StringCellValue, rowNum);
+                                param.BankAccount = TryGetString(currentRow.GetCell(colIndexBankAccount), workSheetName, cellHeaderBankAccount.StringCellValue, rowNum);
+                                param.BankVendor = TryGetString(currentRow.GetCell(colIndexBankVendor), workSheetName, cellHeaderBankVendor.StringCellValue, rowNum);
+                                param.Remarks = TryGetString(currentRow.GetCell(colIndexRemarks), workSheetName, cellHeaderRemarks.StringCellValue, rowNum);
+                                if (!string.IsNullOrEmpty(goodsItem.VATRate.ToString())) param.GoodsItems.Add(goodsItem);
+                                if (!string.IsNullOrEmpty(servicesItem.VATRate.ToString()) || !string.IsNullOrEmpty(servicesItem.WHTRate.ToString()) || !string.IsNullOrEmpty(servicesItem.WHTAmount.ToString())) param.ServicesItems.Add(servicesItem);
+                                param.Adjustment = TryGetString(currentRow.GetCell(colIndexAdjustment), workSheetName, cellHeaderAdjustment.StringCellValue, rowNum);
+                                param.AdjustmentValue = TryGetString(currentRow.GetCell(colIndexAdjustmentValue), workSheetName, cellHeaderAdjustmentAmount.StringCellValue, rowNum);
+                                if (!string.IsNullOrEmpty(AttachmentPath)) param.AttachmentPaths.Add(AttachmentPath);
+                                _Invoice.Add($"{idStr}{dataFor}{seqStr}", param);
+                            }
+                        }
+                    }
+                    #endregion
+                }
+                result.AddRange(_Invoice.Values);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Read Sheet {SheetConstant.Invoice} is Fail : {CheckErrorReadExcel(ex.Message)}");
+            }
+        }
+       
 
         private static List<TaskModels> ReadTask(IWorkbook wb, List<TestplanModels> plans)
 		{

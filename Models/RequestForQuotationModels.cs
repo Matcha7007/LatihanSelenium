@@ -15,7 +15,7 @@
         public string Remarks { get; set; } = string.Empty;
         public virtual List<RFQItem> GoodsItems { get; set; } = [];
         public virtual List<RFQItem> ServicesItems { get; set; } = [];
-        public virtual List<RFQVendor> Vendors { get; set; } = [];
+        public string Vendor { get; set; } = string.Empty;
         public List<string> InternalAttachmentPaths { get; set; } = [];
         public List<string> VendorAttachmentPaths { get; set; } = [];
     }
