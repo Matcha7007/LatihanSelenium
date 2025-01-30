@@ -340,7 +340,6 @@ namespace LatihanSelenium.Utilities
                             {
                                 if (!string.IsNullOrEmpty(goodsItem.Name)) value.GoodsItems.Add(goodsItem);
                                 if (!string.IsNullOrEmpty(servicesItem.Name)) value.ServicesItems.Add(servicesItem);
-                                if (!string.IsNullOrEmpty(Vendor.Name)) value.Vendors.Add(Vendor);
                                 if (!string.IsNullOrEmpty(InternalAttachmentPath)) value.InternalAttachmentPaths.Add(InternalAttachmentPath);
                                 if (!string.IsNullOrEmpty(VendorAttachmentPath)) value.VendorAttachmentPaths.Add(VendorAttachmentPath);
                             }
@@ -356,9 +355,9 @@ namespace LatihanSelenium.Utilities
                                 param.QuotationSubmissionDate = TryGetString(currentRow.GetCell(colIndexQuotationSubmissionDate), workSheetName, cellHeaderQuotationSubmissionDate.StringCellValue, rowNum);
 								param.TargetAppointmentDate = TryGetString(currentRow.GetCell(colIndexTargetAppointmentDate), workSheetName, cellHeaderTargetAppointmentDate.StringCellValue, rowNum);
                                 param.Remarks = TryGetString(currentRow.GetCell(colIndexRemarks), workSheetName, cellHeaderRemarks.StringCellValue, rowNum);
+                                param.Vendor = TryGetString(currentRow.GetCell(colIndexVendor), workSheetName, cellHeaderVendor.StringCellValue, rowNum);
                                 if (!string.IsNullOrEmpty(goodsItem.Name)) param.GoodsItems.Add(goodsItem);
                                 if (!string.IsNullOrEmpty(servicesItem.Name)) param.ServicesItems.Add(servicesItem);
-                                if (!string.IsNullOrEmpty(Vendor.Name)) param.Vendors.Add(Vendor);
                                 if (!string.IsNullOrEmpty(InternalAttachmentPath)) param.InternalAttachmentPaths.Add(InternalAttachmentPath);
                                 if (!string.IsNullOrEmpty(VendorAttachmentPath)) param.VendorAttachmentPaths.Add(VendorAttachmentPath);
                                 _RFQ.Add($"{idStr}{dataFor}{seqStr}", param);
