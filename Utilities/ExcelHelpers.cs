@@ -325,24 +325,13 @@ namespace LatihanSelenium.Utilities
                                 };
                             }
 
-                            string VendorName = TryGetString(currentRow.GetCell(colIndexVendor), workSheetName, cellHeaderVendor.StringCellValue, rowNum);
-                            RFQVendor Vendor = new();
-                            if (!string.IsNullOrEmpty(VendorName))
-                            {
-                                Vendor = new()
-                                {
-                                    Name = VendorName,
-                                };
-                            }
-
                             string InternalAttachmentPath = TryGetString(currentRow.GetCell(colIndexInternalAttachmentPath), workSheetName, cellHeaderInternalAttachmentPath.StringCellValue, rowNum);
                             string VendorAttachmentPath = TryGetString(currentRow.GetCell(colIndexVendorAttachmentPath), workSheetName, cellHeaderVendorAttachmentPath.StringCellValue, rowNum);
 
                             if (_RFQ.TryGetValue($"{idStr}{dataFor}{seqStr}", out RequestForQuotationModels? value))
                             {
                                 if (!string.IsNullOrEmpty(goodsItem.Name)) value.GoodsItems.Add(goodsItem);
-                                if (!string.IsNullOrEmpty(servicesItem.Name)) value.ServicesItems.Add(servicesItem);
-                                if (!string.IsNullOrEmpty(Vendor.Name)) value.Vendors.Add(Vendor);
+                                if (!string.IsNullOrEmpty(servicesItem.Name)) value.ServicesItems.Add(servicesItem);;
                                 if (!string.IsNullOrEmpty(InternalAttachmentPath)) value.InternalAttachmentPaths.Add(InternalAttachmentPath);
                                 if (!string.IsNullOrEmpty(VendorAttachmentPath)) value.VendorAttachmentPaths.Add(VendorAttachmentPath);
                             }
@@ -358,9 +347,9 @@ namespace LatihanSelenium.Utilities
                                 param.QuotationSubmissionDate = TryGetString(currentRow.GetCell(colIndexQuotationSubmissionDate), workSheetName, cellHeaderQuotationSubmissionDate.StringCellValue, rowNum);
 								param.TargetAppointmentDate = TryGetString(currentRow.GetCell(colIndexTargetAppointmentDate), workSheetName, cellHeaderTargetAppointmentDate.StringCellValue, rowNum);
                                 param.Remarks = TryGetString(currentRow.GetCell(colIndexRemarks), workSheetName, cellHeaderRemarks.StringCellValue, rowNum);
+                                param.Vendor = TryGetString(currentRow.GetCell(colIndexVendor), workSheetName, cellHeaderVendor.StringCellValue, rowNum);
                                 if (!string.IsNullOrEmpty(goodsItem.Name)) param.GoodsItems.Add(goodsItem);
                                 if (!string.IsNullOrEmpty(servicesItem.Name)) param.ServicesItems.Add(servicesItem);
-                                if (!string.IsNullOrEmpty(Vendor.Name)) param.Vendors.Add(Vendor);
                                 if (!string.IsNullOrEmpty(InternalAttachmentPath)) param.InternalAttachmentPaths.Add(InternalAttachmentPath);
                                 if (!string.IsNullOrEmpty(VendorAttachmentPath)) param.VendorAttachmentPaths.Add(VendorAttachmentPath);
                                 _RFQ.Add($"{idStr}{dataFor}{seqStr}", param);
