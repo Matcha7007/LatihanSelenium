@@ -243,12 +243,12 @@ namespace LatihanSelenium.Pages
 				case ModuleNameConstant.Invoice:
 					xpath = new()
 					{
-                        Search = PurchaseRequestTaskLocators.Search,
-                        RowTask = PurchaseRequestTaskLocators.RowTask,
-                        ApprovalRemark = PurchaseRequestTaskLocators.ApprovalRemark,
-                        BtnApprove = PurchaseRequestTaskLocators.BtnApprove,
-                        BtnRevise = PurchaseRequestTaskLocators.BtnRevise,
-                        BtnReject = PurchaseRequestTaskLocators.BtnReject,
+                        Search = InvoiceTaskLocators.Search,
+                        RowTask = InvoiceTaskLocators.RowTask,
+                        ApprovalRemark = InvoiceTaskLocators.ApprovalRemark,
+                        BtnApprove = InvoiceTaskLocators.BtnApprove,
+                        BtnRevise = InvoiceTaskLocators.BtnRevise,
+                        BtnReject = InvoiceTaskLocators.BtnReject,
                         UrlPendingTask = UrlConstant.PendingTaskPR,
                         Module = ModuleNameConstant.Invoice
                     };
