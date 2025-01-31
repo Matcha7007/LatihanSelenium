@@ -8,5 +8,6 @@
 		public virtual List<PurchaseRequestModels> PurchaseRequests { get; set; } = [];
         public virtual List<RequestForQuotationModels> RequestForQuotations { get; set; } = [];
 		public virtual List<VendorQuotationModels> VendorQuotations { get; set;} = [];
+        public virtual List<InvoiceModels> Invoices { get; set; } = [];
     }
 }

@@ -81,7 +81,8 @@ namespace LatihanSelenium.Utilities
 							case ModuleNameConstant.ROGS:
 								break;
 							case ModuleNameConstant.Invoice:
-								break;
+                                InvoicePages.HandleTestCase(driver, cfg, plan, param);
+                                break;
 							default:
 								break;
 						}

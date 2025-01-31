@@ -71,7 +71,8 @@ namespace LatihanSelenium.Constants
 		public const string PR = "PurchaseRequest";
 		public const string RFQ = "RequestForQuotation";
 		public const string VQ = "VendorQuotation";
-	}
+        public const string Invoice = "Invoice";
+    }
 
 	public class PrTypeConstant
 	{
@@ -86,6 +87,12 @@ namespace LatihanSelenium.Constants
         public const string Tender ="Tender";
     }
 
+    public class InvoicePaymentTypeConstant
+    {
+        public const string Cash = "Cash";
+        public const string BankTransfer = "Bank Transfer";
+        public const string Other = "Other";
+    }
     public class UrlConstant
 	{
 		private static string BaseUrl = $"{GlobalConfig.Config.Url}/app";
@@ -102,7 +109,11 @@ namespace LatihanSelenium.Constants
         public static string ListRFQ = $"{BaseUrl}/rfq/{List}";
         public static string PendingTaskRFQ = $"{BaseUrl}/rfq/{PendingTask}";
 
-		public static string CreateVQ = $"{BaseUrl}/vendor-quotation/{Create}";
+        public static string CreateInvoice = $"{BaseUrl}/invoice-receive/{Create}";
+        public static string ListInvoice = $"{BaseUrl}/invoice-receive/{List}";
+        public static string PendingTaskInvoice = $"{BaseUrl}/invoice-receive/{PendingTask}";
+
+        public static string CreateVQ = $"{BaseUrl}/vendor-quotation/{Create}";
 		public static string ListVQ = $"{BaseUrl}/vendor-quotation/{List}";
         #endregion
     }
